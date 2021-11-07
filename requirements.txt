@@ -1,0 +1,7 @@
+insightface==0.2.1
+opencv-python==4.5.4.58
+pipreqs==0.4.11
+torch==1.10.0
+torchaudio==0.10.0
+torchvision==0.11.1
+
