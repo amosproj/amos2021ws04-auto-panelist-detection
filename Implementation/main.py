@@ -10,7 +10,7 @@ import cv2
 def main():
     remote.login()
     while True:
-        img = cv2.imread('/Users/janis/Desktop/test-img.png')
+        img = cv2.imread('/home/janis/Desktop/test-img.png')
         sys.stdout = open(os.devnull, 'w')
         num_detected = detection.detect_faces(img, False)
         sys.stdout = sys.__stdout__
