@@ -44,4 +44,17 @@ def detect_faces_deepface(img_path):
         print('{}, {}, {} years old. Dominant emotion: {}'.format(identity, gender, age, emotion))
 
 
-detect_faces_deepface("/home/janis/Dropbox/data/faces/test/test1.jpg")
+#detect_faces_deepface("/home/janis/Dropbox/data/faces/test/test1.jpg")
+
+
+
+def detect_faces_RF(img_path):
+    faces = RetinaFace.detect_faces(img_path) 
+    return faces
+
+def get_facial_areas_RF(faces):
+    facial_areas=[]
+    for face in faces:
+        facial_area = faces[face]["facial_area"]
+        facial_areas.append(facial_area)
+    return facial_areas
