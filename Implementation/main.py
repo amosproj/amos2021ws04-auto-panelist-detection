@@ -28,7 +28,7 @@ def main():
             print('More people have been detected than are registered. Please log in.')
             remote.login()
         t.stop()
-        time.sleep(abs(10-t.elapsed_time))
+        time.sleep(min(abs(10-t.elapsed_time), 2))
 
 
 if __name__ == "__main__":
