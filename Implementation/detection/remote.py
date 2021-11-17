@@ -17,8 +17,8 @@ class Remote:
         if hasattr(key, 'name') and key.name == 'esc':
             return
 
-        key = key.char
         try:
+            key = key.char
             if key.isnumeric():
                 if key not in self.logged_in:
                     self.logged_in.add(key)
