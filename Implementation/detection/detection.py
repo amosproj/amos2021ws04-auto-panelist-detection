@@ -8,6 +8,8 @@ from insightface.app import FaceAnalysis
 from deepface import DeepFace
 from retinaface import RetinaFace
 
+db_path = './database'
+
 
 def detect_faces(img, show_img):
     app = FaceAnalysis()
@@ -29,7 +31,7 @@ def detect_faces_deepface(img_path):
     for face in faces:
         plt.imshow(face)
         plt.show()
-        recognized = DeepFace.find(face, db_path="/home/janis/Dropbox/data/faces/database", detector_backend='skip')
+        recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
         analyzed = DeepFace.analyze(face, detector_backend='skip')
         cosine = recognized['VGG-Face_cosine']
         if len(cosine) > 0:
@@ -42,6 +44,7 @@ def detect_faces_deepface(img_path):
         age = analyzed['age']
         emotion = analyzed['dominant_emotion']
         print('{}, {}, {} years old. Dominant emotion: {}'.format(identity, gender, age, emotion))
+        return num_people
 
 
 #detect_faces_deepface("/home/janis/Dropbox/data/faces/test/test1.jpg")
