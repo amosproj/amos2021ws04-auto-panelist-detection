@@ -14,5 +14,9 @@ about: Suggest new feature (using user story)
 * ...
 
 ## Definition of done
-* Added only after week 5
-* The same for all features
+* Project builds with no errors
+* Feature was demoed and accepted by product owner
+* Pull request review by other team member
+* Unit tests written if necessary and all tests are passed
+* Test coverage is above 40%
+* Code is understandable and commented
