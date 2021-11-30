@@ -24,8 +24,13 @@ def main():
             raise SystemExit('Error occurred while capturing video')
         sys.stdout = open(os.devnull, 'w')
         sys.stdout = sys.__stdout__
-        num_detected = detection.detect_faces_deepface(img)
+        num_detected, faces = detection.detect_faces_deepface(img)
         print('Number of people detected: {}'.format(num_detected))
+        identities = detection.recognize_faces(faces)
+        genders, ages, emotions = detection.analyze_faces(faces)
+        for i, _ in enumerate(faces):
+            print('{}, {}, {} years old. Dominant emotion: {}'.format(identities[i], genders[i], ages[i], emotions[i]))
+
         print('Currently active users: {}'.format(remote.get_logged_in()))
         if num_detected > len(remote.get_logged_in()):
             print('More people have been detected than are registered. Please log in.')

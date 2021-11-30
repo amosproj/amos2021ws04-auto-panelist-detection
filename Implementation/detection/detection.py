@@ -27,28 +27,41 @@ def detect_faces(img, show_img):
 def detect_faces_deepface(img):
     faces = RetinaFace.extract_faces(img_path=img, align=True)
     num_people = len(faces)
-    print('Number of people detected: {}'.format(num_people))
+    return num_people, faces
+
+
+def recognize_faces(faces):
+    identities = []
     for face in faces:
-        plt.imshow(face)
-        plt.show()
+        #plt.imshow(face)
+        #plt.show()
         recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
-        analyzed = DeepFace.analyze(face, detector_backend='skip')
         cosine = recognized['VGG-Face_cosine']
         if len(cosine) > 0:
             max_idx = np.argmax(cosine)
             identity_path = recognized['identity'][max_idx]
-            identity = os.path.split(os.path.dirname(identity_path))[-1]
+            identities.append(os.path.split(os.path.dirname(identity_path))[-1])
         else:
-            identity = 'Unknown'
-        gender = analyzed['gender']
-        age = analyzed['age']
-        emotion = analyzed['dominant_emotion']
-        print('{}, {}, {} years old. Dominant emotion: {}'.format(identity, gender, age, emotion))
-        return num_people
+            identities.append('Unknown')
+    return identities
 
 
-#detect_faces_deepface("/home/janis/Dropbox/data/faces/test/test1.jpg")
+def analyze_faces(faces):
+    genders = []
+    ages = []
+    emotions = []
+    for face in faces:
+        # plt.imshow(face)
+        # plt.show()
+        analyzed = DeepFace.analyze(face, detector_backend='skip')
+        genders.append(analyzed['gender'])
+        ages.append(analyzed['age'])
+        emotions.append(analyzed['dominant_emotion'])
+    return genders, ages, emotions
 
+
+def attentiveness(faces):
+    raise NotImplementedError
 
 
 def detect_faces_RF(img_path):
