@@ -6,7 +6,7 @@ class Remote:
         self.logged_in = set()
 
     def login(self) -> None:
-        print('Accepting logins. Press ESC when done.')
+        print('Accepting logins. Press ESC when done or if you are not registered.')
 
         with keyboard.Listener(
                 on_press=self.on_press,

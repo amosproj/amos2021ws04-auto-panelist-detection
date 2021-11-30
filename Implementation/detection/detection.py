@@ -24,8 +24,8 @@ def detect_faces(img, show_img):
     return num_people
 
 
-def detect_faces_deepface(img_path):
-    faces = RetinaFace.extract_faces(img_path=img_path, align=True)
+def detect_faces_deepface(img):
+    faces = RetinaFace.extract_faces(img_path=img, align=True)
     num_people = len(faces)
     return num_people, faces
 
