@@ -1,4 +1,5 @@
 from Implementation import addfamilyentry as af
 
-af.addfamilyentry("Bernd", "Lütke", 24, 'm', "empty", "b.lütke@gmx.com")
-af.addfamilyentry("Sarah", "Lütke", 22, 'w', "empty", "s.lütke@hotmail.de")
+af.addfamilyentry(1, "Bernd", "Lütke", 24, 'm', "empty")
+af.addfamilyentry(2, "Sarah", "Lütke", 22, 'w', "empty")
+
