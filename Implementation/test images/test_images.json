@@ -1,0 +1,43 @@
+[
+  {
+    "path": "faces_sd.jpg",
+    "number": 5,
+    "people": [
+      {
+        "gender": "f",
+        "age": 22,
+        "emotion": "happy",
+        "attentiveness": 0,
+        "name": "Unknown"
+      },
+      {
+        "gender": "m",
+        "age": 22,
+        "emotion": "happy",
+        "attentiveness": 0,
+        "name": "Unknown"
+      },
+      {
+        "gender": "f",
+        "age": 22,
+        "emotion": "happy",
+        "attentiveness": 0,
+        "name": "Unknown"
+      },
+      {
+        "gender": "m",
+        "age": 22,
+        "emotion": "happy",
+        "attentiveness": 0,
+        "name": "Unknown"
+      },
+      {
+        "gender": "f",
+        "age": 22,
+        "emotion": "happy",
+        "attentiveness": 0,
+        "name": "Unknown"
+      }
+    ]
+  }
+]
