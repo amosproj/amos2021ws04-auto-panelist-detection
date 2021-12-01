@@ -1,5 +1,5 @@
 from pynput.keyboard import Listener
-from ..registration.register import Register
+from Implementation.registration.register import Register
 
 
 class Remote:

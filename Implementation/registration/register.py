@@ -1,9 +1,8 @@
 from retinaface import RetinaFace
-from ..addfamilyentry import addfamilyentry
+from Implementation.addfamilyentry import addfamilyentry
 import matplotlib.pyplot as plt
 import uuid
 import cv2
-
 
 class Register:
 
