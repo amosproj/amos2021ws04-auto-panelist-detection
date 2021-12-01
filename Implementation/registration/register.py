@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import uuid
 import cv2
 
+
 class Register:
 
     def register(self, vid):
@@ -42,6 +43,6 @@ class Register:
                 # replaces id with first name
                 img_path = f'./database/{fname}/{rand_id}.jpg'
                 cv2.imwrite(img_path, face)
-                addfamilyentry(rand_id, fname, lname, age, gender, img_path)
+                addfamilyentry(rand_id, fname, lname, age, gender)
                 print('Person registered successfully\n')
                 break
