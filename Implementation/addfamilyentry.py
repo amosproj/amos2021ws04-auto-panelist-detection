@@ -13,3 +13,10 @@ def addfamilyentry(fName, lName, age, gender, photo, email):
 
     m_df = old_df.append(new_df)
     m_df.to_csv("./database/family.csv", index=False)
+
+
+def get_member(name):
+    df = pd.read_csv("./database/family.csv")
+    idx = df.index[df['First_Name'] == name].tolist()[0]
+    entries = df.iloc[idx,:]
+    return entries[0], entries[3], entries[4]

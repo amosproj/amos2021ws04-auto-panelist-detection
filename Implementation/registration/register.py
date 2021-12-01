@@ -39,7 +39,8 @@ class Register:
                     continue
                 # random generated id (temporary)
                 rand_id = uuid.uuid4().int % 100
-                img_path = f'./database/{rand_id}.jpg'
+                # replaces id with first name
+                img_path = f'./database/{fname}/{rand_id}.jpg'
                 cv2.imwrite(img_path, face)
                 addfamilyentry(rand_id, fname, lname, age, gender, img_path)
                 print('Person registered successfully\n')

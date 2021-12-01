@@ -3,14 +3,16 @@ import detection.detection as detection
 import detection.timer as timer
 import detection.logging as logging
 import matplotlib.pyplot as plt
+import addfamilyentry as db
 
 import time
 import cv2
 
+CAMERA = 1
 
 def main():
     print('Panelist detection started.')
-    vid = cv2.VideoCapture(0)
+    vid = cv2.VideoCapture(CAMERA)
     t = timer.Timer()
     remote = Remote(vid)
     remote.login()
@@ -28,10 +30,16 @@ def main():
             plt.imshow(face)
             if identities[i] == "Unknown":
                 print('Not recognized.')
-                print('Your gender and age are estimated automatically. If you use this TV frequently, please register'
+                print('Your gender and age are estimated automatically. If you use this TV frequently, please register '
                       'by pressing "r"')
+                id = 0
             else:
                 print('Recognized {}'.format(identities[i]))
+                id, age, gender = db.get_member(identities[i])
+                genders[i] = gender
+                ages[i] = age
+            # attentiveness = 0 (not implemented)
+            # TODO also log id
             logging.log(timestamp, genders[i], ages[i], emotions[i], 0)
 
         # print('Currently active users: {}'.format(remote.get_logged_in()))

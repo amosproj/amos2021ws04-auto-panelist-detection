@@ -34,4 +34,7 @@ bin/
 
 # MacOS
 .DS_Store
+
+# Database
 Implementation/database/representations_vgg_face.pkl
+Implementation/database/Janis
