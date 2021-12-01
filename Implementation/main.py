@@ -40,7 +40,7 @@ def main():
                 ages[i] = age
             # attentiveness = 0 (not implemented)
             # TODO also log id
-            logging.log(timestamp, genders[i], ages[i], emotions[i], 0)
+            logging.log(timestamp, id, genders[i], ages[i], emotions[i], 0)
 
         # print('Currently active users: {}'.format(remote.get_logged_in()))
         # if num_detected > len(remote.get_logged_in()):

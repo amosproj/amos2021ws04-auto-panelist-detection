@@ -1,3 +1,4 @@
-def log(timestamp, gender, age, emotion, attentiveness):
+def log(timestamp, id, gender, age, emotion, attentiveness):
     # will be replaced by logging to database
-    print('Log #{}: Gender: {}, Age: {}, Emotion: {}, Attentiveness: {}'.format(timestamp, gender, age, emotion, attentiveness))
+    # id = 0 if not recognized
+    print('Log #{}: Gender: {}, Age: {}, Emotion: {}, Attentiveness: {}'.format(timestamp, id, gender, age, emotion, attentiveness))
