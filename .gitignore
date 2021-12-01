@@ -38,5 +38,6 @@ bin/
 # Database
 Implementation/database/representations_vgg_face.pkl
 Implementation/database/Janis
+Implementation/database/Daniel_C
 Implementation/logs.csv
 Implementation/database/family.csv
