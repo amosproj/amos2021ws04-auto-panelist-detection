@@ -1,10 +1,15 @@
+import os
+
 import pandas as pd
 
 col_names = ['ID', 'First Name', 'Last Name', 'Age', 'Gender', 'Photo']
 
 
 def addfamilyentry(idx, fName, lName, age, gender):
-    old_df = pd.read_csv('./database/family.csv')
+    if not os.path.isfile('./database/family.csv'):
+        old_df = pd.DataFrame()
+    else:
+        old_df = pd.read_csv('./database/family.csv')
 
     new_data = {'ID': [idx], 'First_Name': fName, 'Last_Name': lName, 'Age': age, 'Gender': gender}
 

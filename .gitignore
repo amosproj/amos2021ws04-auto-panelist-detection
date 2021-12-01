@@ -36,8 +36,5 @@ bin/
 .DS_Store
 
 # Database
-Implementation/database/representations_vgg_face.pkl
-Implementation/database/Janis
-Implementation/database/Daniel_C
+Implementation/database/**
 Implementation/logs.csv
-Implementation/database/family.csv

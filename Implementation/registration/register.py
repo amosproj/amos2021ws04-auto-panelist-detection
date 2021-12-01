@@ -1,3 +1,5 @@
+import os
+
 from retinaface import RetinaFace
 from Implementation.addfamilyentry import addfamilyentry
 import matplotlib.pyplot as plt
@@ -41,8 +43,11 @@ class Register:
                 # random generated id (temporary)
                 rand_id = uuid.uuid4().int % 100
                 # replaces id with first name
+                os.mkdir(f'./database/{fname}')
                 img_path = f'./database/{fname}/{rand_id}.jpg'
                 cv2.imwrite(img_path, face)
                 addfamilyentry(rand_id, fname, lname, age, gender)
+                if os.path.isfile('./database/representations_vgg_face.pkl'):
+                    os.unlink('./database/representations_vgg_face.pkl')
                 print('Person registered successfully\n')
                 break
