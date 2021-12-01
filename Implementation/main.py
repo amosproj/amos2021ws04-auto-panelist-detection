@@ -1,7 +1,7 @@
 from detection.remote import Remote
 import detection.detection as detection
 import detection.timer as timer
-import detection.logging as logging
+from detection.logging import Logger
 import matplotlib.pyplot as plt
 import addfamilyentry as db
 
@@ -40,7 +40,7 @@ def main():
                 ages[i] = age
             # attentiveness = 0 (not implemented)
             # TODO also log id
-            logging.log(timestamp, id, genders[i], ages[i], emotions[i], 0)
+            Logger.log(id, genders[i], ages[i], emotions[i], 0)
 
         # print('Currently active users: {}'.format(remote.get_logged_in()))
         # if num_detected > len(remote.get_logged_in()):

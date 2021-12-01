@@ -38,3 +38,5 @@ bin/
 # Database
 Implementation/database/representations_vgg_face.pkl
 Implementation/database/Janis
+Implementation/logs.csv
+Implementation/database/family.csv
