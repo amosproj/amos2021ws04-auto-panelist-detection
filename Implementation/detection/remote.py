@@ -1,40 +1,32 @@
-from pynput import keyboard
+from pynput.keyboard import Listener
+from Implementation.registration.register import Register
 
 
 class Remote:
-    def __init__(self):
+    def __init__(self, settings: dict, vid):
         self.logged_in = set()
+        self.vid = vid
+        self.settings = settings
+        self.key_listener = None
 
-    def login(self) -> None:
-        print('Accepting logins. Press ESC when done or if you are not registered.')
-
-        with keyboard.Listener(
-                on_press=self.on_press,
-                on_release=self.on_release) as listener:
-            listener.join()
-
-    def on_press(self, key):
-        if hasattr(key, 'name') and key.name == 'esc':
-            return
-
-        try:
-            key = key.char
-            if key.isnumeric():
-                if key not in self.logged_in:
-                    self.logged_in.add(key)
-                    print('User {} logged in.'.format(key))
-                else:
-                    self.logged_in.discard(key)
-                    print('User {} logged out.'.format(key))
+    def pressed(self, key):
+        if key.isnumeric():
+            if key not in self.logged_in:
+                self.logged_in.add(key)
+                print('User {} logged in.'.format(key))
             else:
-                print('Only numbers are accepted for user logins.')
-        except AttributeError:
-            print('Only numbers are accepted for user logins.')
+                self.logged_in.discard(key)
+                print('User {} logged out.'.format(key))
+        elif key == 'r':
+            self.settings['register'] = True
+            if self.key_listener is not None:
+                self.key_listener.stop()
+        else:
+            print('Only numbers are accepted for user logins. Register a new user using "r"')
 
-    def on_release(self, key):
-        if key == keyboard.Key.esc:
-            print('Login process done')
-            return False
+    def login(self):
+        self.key_listener = Listener(on_press=lambda key: self.pressed(key.char))
+        self.key_listener.start()
 
     def get_logged_in(self):
         return list(self.logged_in)

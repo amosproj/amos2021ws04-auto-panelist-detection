@@ -34,4 +34,7 @@ bin/
 
 # MacOS
 .DS_Store
-Implementation/database/representations_vgg_face.pkl
+
+# Database
+Implementation/database/**
+Implementation/logs.csv
