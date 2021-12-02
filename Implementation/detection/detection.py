@@ -1,10 +1,12 @@
+import json
+import time
+
 from cv2 import cv2 # for autocompletion
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 
 from insightface.app import FaceAnalysis
-
 from deepface import DeepFace
 from retinaface import RetinaFace
 
@@ -74,3 +76,12 @@ def get_facial_areas_RF(faces):
         facial_area = faces[face]["facial_area"]
         facial_areas.append(facial_area)
     return facial_areas
+
+def facial_emotion_recognition_deepface():
+    start_time = time.time()
+    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg', actions=['emotion'])
+    print(facial_emotion) #type dict
+    print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
+
+
+
