@@ -11,3 +11,4 @@ matplotlib==3.4.3
 numpy==1.21.4
 deepface==0.0.68
 retina-face==0.0.5
+wxPython==4.1.1
