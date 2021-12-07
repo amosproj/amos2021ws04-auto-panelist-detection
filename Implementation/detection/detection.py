@@ -111,8 +111,6 @@ def facial_emotion_recognition_deepface():
     print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
 
 # Age and gender estimation using caffe model from Rothe-IJCV-2018.
-# The input is an opencv image, the output is 2 lists of ages and genders.
-# In this function it will call detect_faces_cv2(img) to detect faces.
 class age_gender_estimator:
     def __init__(self):
         print("[INFO] loading age/gender models...")
