@@ -1,5 +1,5 @@
 import json
-from time import time
+import time
 from cv2 import cv2 # for autocompletion
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,12 +25,11 @@ class detector_faces_cv2():
             raise ValueError("Confirm that opencv is installed on your environment! Expected path ", face_detector_path,
                              " violated.")
         self.haar_detector = cv2.CascadeClassifier(face_detector_path)
-        self.faces_img = []
     def detect(self, img):
+        self.faces_img = []
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = self.haar_detector.detectMultiScale(gray, 1.3, 5)
-        self.faces_position = faces
-        for face in self.faces_position:
+        for face in faces:
             x, y, w, h = face
             detected_face = img[int(y):int(y + h), int(x):int(x + w)]
             self.faces_img.append(detected_face)
@@ -104,11 +103,14 @@ def get_facial_areas_RF(faces):
         facial_areas.append(facial_area)
     return facial_areas
 
-def facial_emotion_recognition_deepface():
+def facial_emotion_recognition_deepface(faces):
     start_time = time.time()
-    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg', actions=['emotion'])
-    print(facial_emotion) #type dict
-    print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
+    emotions = []
+    for face in faces:
+        emotion = DeepFace.analyze(face, actions=['emotion'], detector_backend='skip')
+        emotions.append(emotion)
+    print("facial_emotion_recognition by deepface took", time.time() - start_time, "seconds to run")
+    return emotions
 
 # Age and gender estimation using caffe model from Rothe-IJCV-2018.
 class age_gender_estimator:
@@ -122,12 +124,11 @@ class age_gender_estimator:
     def classifyAgeGender(self, faces_img):
         self.genders = []
         self.ages = []
-        start = time()
+        start = time.time()
         for face_img in faces_img:
             # x, y, w, h = face
             # detected_face = img[int(y):int(y + h), int(x):int(x + w)]
             # self.faces_img.append(detected_face)
-
             # age model is a regular vgg and it expects (224, 224, 3) shape input
             face_img = cv2.resize(face_img, (224, 224))
             img_blob = cv2.dnn.blobFromImage(face_img)  # caffe model expects (1, 3, 224, 224) shape input
@@ -144,7 +145,7 @@ class age_gender_estimator:
             self.genders.append(gender)
             # plt.imshow(detected_face[:, :, ::-1]); plt.axis('off')
             # plt.show()
-        end = time()
+        end = time.time()
         print(f'[INFO] Age / Gender recognition for {len(faces_img)} faces will require {end - start} seconds')
     def get_ages_genders(self):
         return self.ages, self.genders

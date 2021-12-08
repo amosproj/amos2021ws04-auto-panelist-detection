@@ -1,7 +1,7 @@
 import os
 
 from retinaface import RetinaFace
-from Implementation.addfamilyentry import addfamilyentry
+from addfamilyentry import addfamilyentry
 import matplotlib.pyplot as plt
 import uuid
 import cv2
