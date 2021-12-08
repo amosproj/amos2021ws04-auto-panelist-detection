@@ -8,14 +8,14 @@ import face_recognition
 
 
 
-img_path="test images/richard.jpg" 
-img_path2="test images/richard2.jpg" 
+img_path="test images/Samia/samia-liamani-j2tofe0XdUc-unsplash (1).jpg"
+img_path2="test images/Samia/samia-liamani-8CFiEezCPfQ-unsplash.jpg"
 img_path3="test images/James.jpg"
 
 start = time.time()
 
 known_image = face_recognition.load_image_file(img_path)
-unknown_image = face_recognition.load_image_file(img_path3)
+unknown_image = face_recognition.load_image_file(img_path2)
 print(time.time() - start)
 
 

@@ -5,7 +5,7 @@ import image.draw as draw
 import image.image as image
 
 
-img_path="test images/faces_sd.jpg"
+img_path="test images/Samia/samia-liamani-3lXHHLfYcu0-unsplash.jpg"
 img = cv2.imread(img_path)
 
 

@@ -39,8 +39,8 @@ def recognize_faces(faces):
         #plt.show()
         recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
         cosine = recognized['VGG-Face_cosine']
-        if len(cosine) > 0:
-            max_idx = np.argmax(cosine)
+        if len(cosine) > 0 and cosine[0] < 0.2:
+            max_idx = np.argmin(cosine)
             identity_path = recognized['identity'][max_idx]
             identities.append(os.path.split(os.path.dirname(identity_path))[-1])
         else:

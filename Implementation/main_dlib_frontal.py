@@ -5,7 +5,7 @@ import time
 
 
 #face_detect = dlib.cnn_face_detection_model_v1("models/mmod_human_face_detector.dat")
-face_detect= dlib.get_frontal_face_detector() # very fast but only detects frontal face 
+face_detect= dlib.get_frontal_face_detector() # very fast but only detects frontal face
 
 start = time.time()
 
