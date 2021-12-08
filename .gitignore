@@ -36,5 +36,5 @@ bin/
 .DS_Store
 
 # Database
-# Implementation/database/**
+Implementation/database/**
 Implementation/logs.csv
