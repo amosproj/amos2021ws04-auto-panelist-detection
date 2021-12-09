@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-col_names = ['ID', 'First Name', 'Last Name', 'Age', 'Gender']
+col_names = ['ID', 'First_Name', 'Last_Name', 'Age', 'Gender']
 
 
 def add_family_entry(idx, fName, lName, age, gender):
