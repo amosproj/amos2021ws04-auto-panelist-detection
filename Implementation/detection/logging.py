@@ -1,6 +1,6 @@
+from datetime import datetime
 import csv
 import os
-from datetime import datetime
 
 
 class Logger:

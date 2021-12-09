@@ -1,10 +1,10 @@
-import os
-
+from Implementation.add_family_entry import add_family_entry
 from retinaface import RetinaFace
-from Implementation.addfamilyentry import addfamilyentry
+
 import matplotlib.pyplot as plt
 import uuid
 import cv2
+import os
 
 
 class Register:
@@ -46,7 +46,7 @@ class Register:
                 os.mkdir(f'./database/{fname}')
                 img_path = f'./database/{fname}/{rand_id}.jpg'
                 cv2.imwrite(img_path, face)
-                addfamilyentry(rand_id, fname, lname, age, gender)
+                add_family_entry(rand_id, fname, lname, age, gender)
                 if os.path.isfile('./database/representations_vgg_face.pkl'):
                     os.unlink('./database/representations_vgg_face.pkl')
                 print('Person registered successfully\n')
