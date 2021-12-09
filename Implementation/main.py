@@ -7,7 +7,6 @@ import detection.detection as detection
 import detection.timer as timer
 import matplotlib.pyplot as plt
 import add_family_entry as db
-# import image.draw as draw
 import image.image as image
 import image.draw as draw
 import torch
