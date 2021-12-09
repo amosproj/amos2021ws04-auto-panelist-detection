@@ -1,5 +1,6 @@
+from Implementation import add_family_entry as af
 import wx
-import addfamilyentry as af
+
 
 class MyFrame(wx.Frame):
     def __init__(self):
@@ -44,13 +45,13 @@ class MyFrame(wx.Frame):
         my_sizer.Add(statictext5, 0, wx.ALL | wx.EXPAND, 5)
 
         my_btn = wx.Button(panel, label='Save in CSV')
-        my_btn.Bind(wx.EVT_BUTTON, self.OnSubmit)
+        my_btn.Bind(wx.EVT_BUTTON, self.on_submit)
         my_sizer.Add(my_btn, 0, wx.ALL | wx.CENTER, 5)
 
         panel.SetSizer(my_sizer)
         self.Show()
 
-    def OnSubmit(self, e):
+    def on_submit(self, e):
         value1 = self.text_ctrl1.GetValue()
         self.static_text1.SetLabelText(f'The First Name is: "{value1}"')
 
@@ -66,9 +67,11 @@ class MyFrame(wx.Frame):
         value5 = self.text_ctrl5.GetValue()
         self.static_text5.SetLabelText(f'You can find the Photo in: "{value5}"')
 
-        af.addfamilyentry(value1,value2,value3,value4,value5)
+        af.add_family_entry(0, value1, value2, value3, value4)
+        # af.add_family_entry(value1, value2, value3, value4, value5)
 
-if __name__ == '__main__':
+
+def main():
     app = wx.App()
     frame = MyFrame()
     app.MainLoop()
