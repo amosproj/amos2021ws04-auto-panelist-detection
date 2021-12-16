@@ -1,4 +1,4 @@
-from Implementation import add_family_entry as af
+import add_family_entry as af
 import wx
 
 

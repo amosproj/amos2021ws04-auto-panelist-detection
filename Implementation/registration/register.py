@@ -1,4 +1,4 @@
-from Implementation.add_family_entry import add_family_entry
+from add_family_entry import add_family_entry
 from retinaface import RetinaFace
 
 import matplotlib.pyplot as plt
