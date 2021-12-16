@@ -9,7 +9,7 @@ import json
 import time
 import os
 
-db_path = './database'
+db_path = './../database'
 
 
 def detect_faces(img, show_img):
@@ -39,7 +39,7 @@ def recognize_faces(faces):
         recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
         cosine = recognized['VGG-Face_cosine']
         if len(cosine) > 0:
-            max_idx = np.argmax(cosine)
+            max_idx = np.argmin(cosine)
             identity_path = recognized['identity'][max_idx]
             identities.append(os.path.split(os.path.dirname(identity_path))[-1])
         else:

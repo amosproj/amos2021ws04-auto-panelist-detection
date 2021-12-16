@@ -1,7 +1,6 @@
 from registration.register import Register
 from detection.logging import Logger
 from detection.remote import Remote
-from gui import save_gui
 
 import detection.detection as detection
 import detection.timer as timer
