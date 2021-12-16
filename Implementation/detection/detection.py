@@ -1,5 +1,6 @@
 from insightface.app import FaceAnalysis
 from retinaface import RetinaFace
+from deepface.detectors import RetinaFaceWrapper 
 from deepface import DeepFace
 from cv2 import cv2
 
@@ -9,8 +10,21 @@ import json
 import time
 import os
 
+face_detector = RetinaFace.build_model()
 db_path = './database'
 
+def detect_faces_deepface_RF(img):
+    # detects faces, returns aligned faces (based64 encoded) and facial areas
+    resp = RetinaFaceWrapper.detect_face(face_detector,img,align=True)
+    faces=[]
+    facial_areas=[]
+
+    # prepare results in lists + switch facial area format from deepface to retinaface
+    for face, facial_area in resp:
+        faces.append(face)
+        x,y,w,h = facial_area
+        facial_areas.append([x,y,x+w,y+h])  
+    return len(faces),faces,facial_areas        
 
 def detect_faces(img, show_img):
     app = FaceAnalysis()
@@ -24,7 +38,6 @@ def detect_faces(img, show_img):
         cv2.waitKey()
     return num_people
 
-
 def detect_faces_deepface(img):
     faces = RetinaFace.extract_faces(img_path=img, align=True)
     num_people = len(faces)
@@ -33,14 +46,23 @@ def detect_faces_deepface(img):
 
 def recognize_faces(faces):
     identities = []
-    for face in faces:
-        # plt.imshow(face)
-        # plt.show()
-        recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
-        cosine = recognized['VGG-Face_cosine']
+    metrics = ["cosine", "euclidean", "euclidean_l2"] # for computing similarity. Lower score = more similarity.
+    #TODO handle exceptions if no faces or no images in database
+
+    # Finds the most similar identities for each face # Afaik ArcFace+euclidean_l2 showed best results # skip detection: we already pass encoded faces
+    dfs = DeepFace.find(img_path = faces, db_path = db_path, model_name = 'ArcFace',detector_backend = 'skip', distance_metric = metrics[2])
+    if not isinstance(dfs,list):
+        dfs = [dfs]
+
+    # Get most similar identity for each face
+    for df in dfs:
+        #plt.imshow(face)
+        #plt.show()
+        cosine = df['ArcFace_euclidean_l2']
+        
         if len(cosine) > 0:
-            max_idx = np.argmax(cosine)
-            identity_path = recognized['identity'][max_idx]
+            max_idx = np.argmin(cosine)
+            identity_path = df['identity'][max_idx]
             identities.append(os.path.split(os.path.dirname(identity_path))[-1])
         else:
             identities.append('Unknown')
