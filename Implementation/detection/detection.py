@@ -1,13 +1,14 @@
-from insightface.app import FaceAnalysis
-from retinaface import RetinaFace
-from deepface import DeepFace
-from cv2 import cv2
-
-import matplotlib.pyplot as plt
-import numpy as np
 import json
 import time
+
+from cv2 import cv2 # for autocompletion
+import matplotlib.pyplot as plt
+import numpy as np
 import os
+
+from insightface.app import FaceAnalysis
+from deepface import DeepFace
+from retinaface import RetinaFace
 
 db_path = './database'
 
@@ -34,12 +35,12 @@ def detect_faces_deepface(img):
 def recognize_faces(faces):
     identities = []
     for face in faces:
-        # plt.imshow(face)
-        # plt.show()
+        #plt.imshow(face)
+        #plt.show()
         recognized = DeepFace.find(face, db_path=db_path, detector_backend='skip')
         cosine = recognized['VGG-Face_cosine']
-        if len(cosine) > 0:
-            max_idx = np.argmax(cosine)
+        if len(cosine) > 0 and cosine[0] < 0.2:
+            max_idx = np.argmin(cosine)
             identity_path = recognized['identity'][max_idx]
             identities.append(os.path.split(os.path.dirname(identity_path))[-1])
         else:
@@ -66,21 +67,21 @@ def attentiveness(faces):
 
 
 def detect_faces_RF(img_path):
-    faces = RetinaFace.detect_faces(img_path)
+    faces = RetinaFace.detect_faces(img_path) 
     return faces
 
-
 def get_facial_areas_RF(faces):
-    facial_areas = []
+    facial_areas=[]
     for face in faces:
         facial_area = faces[face]["facial_area"]
         facial_areas.append(facial_area)
     return facial_areas
 
-
 def facial_emotion_recognition_deepface():
     start_time = time.time()
-    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg',
-                                      actions=['emotion'])
-    print(facial_emotion)  # type dict
+    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg', actions=['emotion'])
+    print(facial_emotion) #type dict
     print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
+
+
+
