@@ -1,18 +1,22 @@
 [
   {
     "path": "Group01/mark-decile-JgEe8T9KWck-unsplash.jpg",
-    "number": 4
+    "number": 4,
+    "number_static": 0
   },
   {
     "path": "Group01/mark-decile-NuAjvvB8Ngw-unsplash.jpg",
-    "number": 11
+    "number": 11,
+    "number_static": 0
   },
   {
     "path": "Group01/mark-decile-WJtgAfxfFcs-unsplash.jpg",
-    "number": 1
+    "number": 1,
+    "number_static": 0
   },
   {
     "path": "Group01/mark-decile-YlF8c8vsdoA-unsplash.jpg",
-    "number": 6
+    "number": 6,
+    "number_static": 0
   }
 ]
