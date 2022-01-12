@@ -12,6 +12,9 @@ class TestOnImages(unittest.TestCase):
         f = open('./test images/test_images.json')
         cls.test_data = json.load(f)
         cls.faces = []
+        cls.ages = []
+        cls.emotions = []
+        cls.genders = []
         f.close()
         detection.set_test_env()
 
@@ -22,6 +25,46 @@ class TestOnImages(unittest.TestCase):
             number, faces = detection.detect_faces_deepface('./test images/' + img['path'])
             self.faces.append(faces)
             self.assertEqual(number, img['number'])
+            t = time.time() - st
+            durations.append(t)
+        print('Average detection time: {} s'.format(np.mean(durations)))
+
+    def test_age_detection(self):
+        durations = []
+        for img in self.test_data:
+            st = time.time()
+            age = detection.detect_age('./test images/' + img['path'])
+            self.ages.append(age)
+            self.assertEqual(age, img['age'])
+            t = time.time() - st
+            durations.append(t)
+        print('Average detection time: {} s'.format(np.mean(durations)))
+
+    def test_emotion_detection(self):
+        #! emotion_labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
+        durations = []
+        for img in self.test_data:
+            st = time.time()
+            emotion = detection.detect_emotion('./test images/' + img['path'])
+            self.emotions.append(emotion)
+            self.assertEqual(emotion, img['emotion'])
+            t = time.time() - st
+            durations.append(t)
+        print('Average detection time: {} s'.format(np.mean(durations)))
+
+    def test_gender_detection(self):
+        durations = []
+        for img in self.test_data:
+            st = time.time()
+            gender = detection.detect_gender('./test images/' + img['path'])
+
+            if gender == "Woman":
+                gender = "f"
+            elif gender== "Man":
+                gender = "m"
+            
+            self.genders.append(gender)
+            self.assertEqual(gender, img['gender'])
             t = time.time() - st
             durations.append(t)
         print('Average detection time: {} s'.format(np.mean(durations)))

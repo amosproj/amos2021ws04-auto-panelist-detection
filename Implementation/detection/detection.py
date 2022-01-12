@@ -82,10 +82,14 @@ def analyze_faces(faces):
     for face in faces:
         # plt.imshow(face)
         # plt.show()
-        analyzed = DeepFace.analyze(face, detector_backend='skip')
-        genders.append(analyzed['gender'])
-        ages.append(analyzed['age'])
-        emotions.append(analyzed['dominant_emotion'])
+        #analyzed = DeepFace.analyze(face, detector_backend='skip')
+        #genders.append(analyzed['gender'])
+        #ages.append(analyzed['age'])
+        #emotions.append(analyzed['dominant_emotion'])
+
+        genders.append(detect_gender(face))
+        ages.append(detect_age(face))
+        emotions.append(detect_emotion(face))
     return genders, ages, emotions
 
 
@@ -112,3 +116,42 @@ def facial_emotion_recognition_deepface():
                                       actions=['emotion'])
     print(facial_emotion)  # type dict
     print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
+
+
+
+
+# Emotion Age Gender detection models (separate) # deepface models + without model reload # use with detected faces (detector_backend ="skip")
+models_age = {}
+models_gender = {}
+models_emotion = {}
+models_age['age'] = DeepFace.build_model('Age')
+models_gender['gender'] = DeepFace.build_model('Gender')
+models_emotion['emotion'] = DeepFace.build_model('Emotion')
+# This is necessary because of the DeepFace.analyze() function
+
+def detect_emotion(img,model=models_emotion):
+    result = DeepFace.analyze(img,actions=["emotion"],models=model,detector_backend ="skip")
+    return result["dominant_emotion"]
+
+def detect_gender(img,model=models_gender):
+    result = DeepFace.analyze(img,actions=["gender"],models=model,detector_backend ="skip")
+    return result["gender"]
+
+def detect_age(img,model=models_age):
+    result = DeepFace.analyze(img,actions=["age"],models=model,detector_backend ="skip")
+    return result["age"]
+
+# example usage:
+# def main():
+#     img_path = "test images/James.jpg"
+#     img = cv2.imread(img_path)
+
+#     num_detected, faces, facial_areas = detection.detect_faces_deepface_RF(img) 
+#     print(len(faces))
+
+#     print(detection.detect_age(faces[0]))
+#     print(detection.detect_emotion(faces[0]))
+#     print(detection.detect_gender(faces[0]))
+
+
+
