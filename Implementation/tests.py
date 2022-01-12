@@ -13,6 +13,7 @@ class TestOnImages(unittest.TestCase):
         cls.test_data = json.load(f)
         cls.faces = []
         f.close()
+        detection.set_test_env()
 
     def test_detection(self):
         durations = []

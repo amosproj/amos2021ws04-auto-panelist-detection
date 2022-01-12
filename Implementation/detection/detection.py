@@ -12,6 +12,11 @@ import os
 db_path = './../database'
 
 
+def set_test_env():
+    global db_path
+    db_path = './database'
+
+
 def detect_faces(img, show_img):
     app = FaceAnalysis()
     app.prepare(ctx_id=0, det_size=(640, 640))
