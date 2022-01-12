@@ -11,7 +11,13 @@ import time
 import os
 
 face_detector = RetinaFace.build_model()
-db_path = './database'
+db_path = './../database'
+
+
+def set_test_env():
+    global db_path
+    db_path = './database'
+
 
 def detect_faces_deepface_RF(img):
     # detects faces, returns aligned faces (based64 encoded) and facial areas
