@@ -38,3 +38,4 @@ bin/
 # Database
 Implementation/database/**
 Implementation/logs.csv
+Implementation/gui/logs.csv
