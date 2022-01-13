@@ -1,17 +1,18 @@
+
+import json
+import time
 from insightface.app import FaceAnalysis
 from retinaface import RetinaFace
 from deepface.detectors import RetinaFaceWrapper 
 from deepface import DeepFace
-from cv2 import cv2
-
+from cv2 import cv2 # for autocompletion
 import matplotlib.pyplot as plt
 import numpy as np
-import json
-import time
 import os
 
 face_detector = RetinaFace.build_model()
 db_path = './../database'
+
 
 
 def set_test_env():
@@ -99,23 +100,20 @@ def attentiveness(faces):
 
 
 def detect_faces_RF(img_path):
-    faces = RetinaFace.detect_faces(img_path)
+    faces = RetinaFace.detect_faces(img_path) 
     return faces
 
-
 def get_facial_areas_RF(faces):
-    facial_areas = []
+    facial_areas=[]
     for face in faces:
         facial_area = faces[face]["facial_area"]
         facial_areas.append(facial_area)
     return facial_areas
 
-
 def facial_emotion_recognition_deepface():
     start_time = time.time()
-    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg',
-                                      actions=['emotion'])
-    print(facial_emotion)  # type dict
+    facial_emotion = DeepFace.analyze(img_path='../test images/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg', actions=['emotion'])
+    print(facial_emotion) #type dict
     print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
 
 
@@ -153,6 +151,5 @@ def detect_age(img,model=models_age):
 #     print(detection.detect_age(faces[0]))
 #     print(detection.detect_emotion(faces[0]))
 #     print(detection.detect_gender(faces[0]))
-
 
 
