@@ -1,42 +1,127 @@
 [
   {
-    "path": "faces_sd.jpg",
-    "number": 5,
-    "people": [
-      {
-        "gender": "f",
-        "age": 22,
-        "emotion": "happy",
-        "attentiveness": 0,
-        "name": "Unknown"
-      },
-      {
+    "directory_path" : "/Ben",
+    "name" : "Ben",
+    "images" : [
+      { "path": "/Ben/ben-collins-6CFmQSQlTz4-unsplash.jpg",
+        "name": "Ben",
+        "age": 20,
         "gender": "m",
-        "age": 22,
-        "emotion": "happy",
-        "attentiveness": 0,
-        "name": "Unknown"
+        "emotion": "happy"
       },
-      {
-        "gender": "f",
-        "age": 22,
-        "emotion": "happy",
-        "attentiveness": 0,
-        "name": "Unknown"
-      },
-      {
+      { "path": "/Ben/ben-collins-Bd77rGNvsIg-unsplash.jpg",
+        "name": "Ben",
+        "age": 20,
         "gender": "m",
-        "age": 22,
-        "emotion": "happy",
-        "attentiveness": 0,
-        "name": "Unknown"
+        "emotion": "surprise"
       },
-      {
-        "gender": "f",
+      { "path": "/Ben/ben-collins-Ci-15Whn_IA-unsplash.jpg",
+        "name": "Ben",
+        "age": 20,
+        "gender": "m",
+        "emotion": "happy"
+      },
+      { "path": "/Ben/ben-collins-G6D6CE1MPN0-unsplash.jpg",
+        "name": "Ben",
+        "age": 20,
+        "gender": "m",
+        "emotion": "happy"
+      }
+    ]
+  },
+  {
+    "directory_path" : "/John",
+    "name" : "John",
+    "images" : [
+      { "path": "/John/podpros-M669OZWs2GQ-unsplash.jpg",
+        "name": "John",
+        "age": 27,
+        "gender": "m",
+        "emotion": "happy"
+      },
+      { "path": "/John/podpros-nf0Oj9aVnC4-unsplash.jpg",
+        "name": "John",
+        "age": 27,
+        "gender": "m",
+        "emotion": "happy"
+      },
+      { "path": "/John/podpros-wIwV5n9fuXY-unsplash.jpg",
+        "name": "John",
+        "age": 27,
+        "gender": "m",
+        "emotion": "happy"
+      },
+      { "path": "/John/podpros-x7QntjBUVi4-unsplash.jpg",
+        "name": "John",
+        "age": 27,
+        "gender": "m",
+        "emotion": "happy"
+      },
+      { "path":  "podpros-XRBDu4iY2s0-unsplash.jpg",
+        "name": "John",
+        "age": 27,
+        "gender": "m",
+        "emotion": "happy"
+      }
+    ]
+  },
+  {
+    "directory_path" : "/Sabrina",
+    "name" : "Sabrina",
+    "images" : [
+      { "path": "/Sabrina/rizky-sabriansyah-6h-sK5_4nEA-unsplash.jpg",
+        "name": "Sabrina",
         "age": 22,
-        "emotion": "happy",
-        "attentiveness": 0,
-        "name": "Unknown"
+        "gender": "w",
+        "emotion": "neutral"
+      },
+      { "path": "/Sabrina/rizky-sabriansyah-eMmaeaM3Gn4-unsplash.jpg",
+        "name": "Sabrina",
+        "age": 22,
+        "gender": "w",
+        "emotion": "neutral"
+      },
+      { "path": "/Sabrina/rizky-sabriansyah-UjdL7YW9FWA-unsplash.jpg",
+        "name": "Sabrina",
+        "age": 22,
+        "gender": "w",
+        "emotion": "neutral"
+      },
+      { "path": "/Sabrina/rizky-sabriansyah-VfqAJCHcM_c-unsplash.jpg",
+        "name": "Sabrina",
+        "age": 22,
+        "gender": "w",
+        "emotion": "neutral"
+      }
+    ]
+  },
+  {
+    "directory_path" : "/Samia",
+    "name" : "Samia",
+    "images" : [
+      { "path": "/Samia/samia-liamani-3lXHHLfYcu0-unsplash.jpg",
+        "name": "Samia",
+        "age": 43,
+        "gender": "w",
+        "emotion": "happy"
+      },
+      { "path": "/Samia/samia-liamani-8CFiEezCPfQ-unsplash.jpg",
+        "name": "Samia",
+        "age": 43,
+        "gender": "w",
+        "emotion": "happy"
+      },
+      { "path": "/Samia/samia-liamani-j2tofe0XdUc-unsplash (1).jpg" ,
+        "name": "Samia",
+        "age": 43,
+        "gender": "w",
+        "emotion": "happy"
+      },
+      { "path": "/Samia/samia-liamani-jLc6cUhVjjA-unsplash.jpg",
+        "name": "Samia",
+        "age": 43,
+        "gender": "w",
+        "emotion": "happy"
       }
     ]
   }
