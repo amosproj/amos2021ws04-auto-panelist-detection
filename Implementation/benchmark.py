@@ -81,7 +81,7 @@ class Benchmark:
                 st_age = time.time()
                 age = detection.detect_age(faces[0])
                 t_age = time.time() - st_age
-                age_correct = (age in range(img['age'] - 5, img['age'] + 5))
+                age_correct = (age in range(img['age'] - 10, img['age'] + 10))
 
                 st_emotion = time.time()
                 emotion = detection.detect_emotion(faces[0])
