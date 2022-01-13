@@ -2,6 +2,12 @@ from insightface.app import FaceAnalysis
 from retinaface import RetinaFace
 from deepface import DeepFace
 from cv2 import cv2
+from .anti_spoof_predict import AntiSpoofPredict
+from .utility import parse_model_name
+from .generate_patches import CropImage
+from os.path import dirname as up
+
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -84,3 +90,40 @@ def facial_emotion_recognition_deepface():
                                       actions=['emotion'])
     print(facial_emotion)  # type dict
     print("facial_emotion_recognition by deepface took", time.time() - start_time, "to run")
+
+model_test = AntiSpoofPredict(0)
+def liveness_detector(frame, image_bbox):
+    image_cropper = CropImage()
+    dir = up(up(__file__))
+    model_dir = os.path.join(dir, 'models/anti_spoof_models')
+    # model_dir = '../models/anti_spoof_models'
+    # image_bbox = model_test.get_bbox(frame)
+    # if image_bbox[0] == 0 and image_bbox[1] == 0 and image_bbox[2] == 1 and image_bbox[3] == 1:
+    #     return False
+    prediction = np.zeros((1, 3))
+    # test_speed = 0
+    # sum the prediction from single model's result
+    for model_name in os.listdir(model_dir):
+        h_input, w_input, model_type, scale = parse_model_name(model_name)
+        param = {
+            "org_img": frame,
+            "bbox": image_bbox,
+            "scale": scale,
+            "out_w": w_input,
+            "out_h": h_input,
+            "crop": True,
+        }
+        if scale is None:
+            param["crop"] = False
+        img = image_cropper.crop(**param)
+        prediction += model_test.predict(img, os.path.join(model_dir, model_name))
+
+    # label: face is true or fake
+    label = np.argmax(prediction)
+    # value: the score of prediction
+    value = prediction[0][label]
+    if label == 1 and value > 0.7:
+        return True
+    else:
+        return False
+

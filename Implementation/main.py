@@ -14,7 +14,7 @@ import time
 import cv2
 
 
-CAMERA = 0
+CAMERA = 1
 
 
 def main():
@@ -31,6 +31,12 @@ def main():
             raise SystemExit('Error occurred while capturing video')
         num_detected, faces = detection.detect_faces_deepface(img)
         print('Number of people detected: {}'.format(num_detected))
+        faces_info = detection.detect_faces_RF(img)
+        bboxes = detection.get_facial_areas_RF(faces_info)
+        if bboxes:
+            for i, bbox in enumerate(bboxes):
+                if detection.liveness_detector(img, bbox) == True:
+                    print('fake face found!')
         identities = detection.recognize_faces(faces)
         genders, ages, emotions = detection.analyze_faces(faces)
         for i, face in enumerate(faces):
