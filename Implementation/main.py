@@ -24,6 +24,7 @@ def main():
     t = timer.Timer()
     remote = Remote(settings, vid)
     remote.login()
+    time.sleep(2)
     while True:
         t.start()
         ret, img = vid.read()
@@ -31,12 +32,12 @@ def main():
             raise SystemExit('Error occurred while capturing video')
         num_detected, faces = detection.detect_faces_deepface(img)
         print('Number of people detected: {}'.format(num_detected))
-        faces_info = detection.detect_faces_RF(img)
-        bboxes = detection.get_facial_areas_RF(faces_info)
-        if bboxes:
-            for i, bbox in enumerate(bboxes):
-                if detection.liveness_detector(img, bbox) == True:
-                    print('fake face found!')
+        if num_detected > 0:
+            faces_info = detection.detect_faces_RF(img)
+            # style for bbox: x1,y1,x2,y2 not x,y,w,h!
+            bboxes = detection.get_facial_areas_RF(faces_info)
+            #input: current frame and a list of bboxes, return: list of boolean values of false positives detetion
+            print(detection.liveness_detector(img,bboxes))
         identities = detection.recognize_faces(faces)
         genders, ages, emotions = detection.analyze_faces(faces)
         for i, face in enumerate(faces):
