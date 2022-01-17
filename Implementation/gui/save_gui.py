@@ -129,16 +129,26 @@ class RegistrationFrame(wx.Frame):
         name = self.name_ctrl.GetValue()
         gender = self.gender_ctrl.GetValue()
         age = self.age_ctrl.GetValue()
-        # TODO: Check if id or nickname already exists
         # random generated id
-        rand_id = uuid.uuid4().int % 100
+        used_ids = db.get_ids()
+        while True:
+            rand_id = uuid.uuid4().int % 100
+            if rand_id not in used_ids:
+                break
         if db.check_member_exists(name):
             db.update_family_entry(name, age, gender)
         else:
             db.add_family_entry(rand_id, name, age, gender)
         if not os.path.exists(f'./../database/{name}'):
             os.mkdir(f'./../database/{name}')
-        img_path = f'./../database/{name}/{rand_id}.jpg'
+        img_ids = []
+        for f in os.listdir(f'./../database/{name}'):
+            img_ids.append(int(f.split(os.sep)[-1][:-4]))
+        if not img_ids:
+            img_id = 0
+        else:
+            img_id = max(img_ids) + 1
+        img_path = f'./../database/{name}/{img_id}.jpg'
         cv2.imwrite(img_path, face)
         if os.path.isfile('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL)):
             os.unlink('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL))

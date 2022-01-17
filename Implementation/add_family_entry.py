@@ -9,23 +9,29 @@ def add_family_entry(idx, name, age, gender):
         old_df = pd.read_csv('./../database/family.csv')
 
     new_data = {'ID': [idx], 'Nickname': name, 'Age': age, 'Gender': gender}
-
     new_df = pd.DataFrame(new_data)
-
     m_df = old_df.append(new_df)
     m_df.to_csv("./../database/family.csv", index=False)
 
 
 def update_family_entry(name, age, gender):
-    # TODO
-    raise NotImplementedError
+    old_df = pd.read_csv('./../database/family.csv')
+    old_id = old_df[old_df['Nickname'] == name].ID.item()
+    old_df = old_df[old_df.Nickname != name]
+
+    new_data = {'ID': [old_id], 'Nickname': name, 'Age': age, 'Gender': gender}
+    new_df = pd.DataFrame(new_data)
+    m_df = old_df.append(new_df)
+    m_df.to_csv("./../database/family.csv", index=False)
+
+    return id
 
 
 def check_member_exists(name):
     if not os.path.isfile('./../database/family.csv'):
         return False
     df = pd.read_csv("./../database/family.csv")
-    return name in df['Nickname']
+    return name in df.Nickname.values
 
 
 def get_member(name):
@@ -37,6 +43,11 @@ def get_member(name):
         print('{} was detected but not found in the database.'.format(name))
         entries = [0, name, 0, '']
     return entries[0], entries[2], entries[3]
+
+
+def get_ids():
+    df = pd.read_csv("./../database/family.csv")
+    return df.ID.values
 
 
 # taken from deleted file -savefamilyinformation.py, probably for testing pourposes
