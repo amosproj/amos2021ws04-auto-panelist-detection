@@ -30,8 +30,12 @@ def check_member_exists(name):
 
 def get_member(name):
     df = pd.read_csv("./../database/family.csv")
-    idx = df.index[df['Nickname'] == name].tolist()[0]
-    entries = df.iloc[idx, :]
+    try:
+        idx = df.index[df['Nickname'] == name].tolist()[0]
+        entries = df.iloc[idx, :]
+    except IndexError:
+        print('{} was detected but not found in the database.'.format(name))
+        entries = [0, name, 0, '']
     return entries[0], entries[2], entries[3]
 
 

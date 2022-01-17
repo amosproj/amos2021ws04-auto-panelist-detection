@@ -11,6 +11,7 @@ import uuid
 import os
 
 CAMERA = 1
+RECOGNITION_MODEL = 'arcface'
 
 
 class RegistrationFrame(wx.Frame):
@@ -129,18 +130,18 @@ class RegistrationFrame(wx.Frame):
         gender = self.gender_ctrl.GetValue()
         age = self.age_ctrl.GetValue()
         # TODO: Check if id or nickname already exists
+        # random generated id
+        rand_id = uuid.uuid4().int % 100
         if db.check_member_exists(name):
             db.update_family_entry(name, age, gender)
         else:
-            # random generated id
-            rand_id = uuid.uuid4().int % 100
-            if not os.path.isfile(f'./../database/{name}'):
-                os.mkdir(f'./../database/{name}')
-            img_path = f'./../database/{name}/{rand_id}.jpg'
-            cv2.imwrite(img_path, face)
             db.add_family_entry(rand_id, name, age, gender)
-            if os.path.isfile('./../database/representations_vgg_face.pkl'):
-                os.unlink('./../database/representations_vgg_face.pkl')
+        if not os.path.exists(f'./../database/{name}'):
+            os.mkdir(f'./../database/{name}')
+        img_path = f'./../database/{name}/{rand_id}.jpg'
+        cv2.imwrite(img_path, face)
+        if os.path.isfile('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL)):
+            os.unlink('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL))
         self.reset_registration()
 
 
