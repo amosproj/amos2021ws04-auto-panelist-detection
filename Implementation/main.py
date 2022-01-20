@@ -1,6 +1,7 @@
 from registration.register import Register
 from detection.logging import Logger
 from detection.remote import Remote
+from gui.save_gui import RegistrationFrame
 
 import detection.detection as detection
 import detection.timer as timer
@@ -11,6 +12,7 @@ import image.draw as draw
 import torch
 import time
 import cv2
+import wx
 
 
 CAMERA = 1
@@ -65,11 +67,6 @@ def main():
         t.stop()
         time.sleep(min(abs(10 - t.elapsed_time), 6))
         test=test+1
-
-
-if __name__ == "__main__":
-    main()
-    # save_gui.main()
 
 
 def main_2():
@@ -216,3 +213,9 @@ def main_facenet():
             cv2.rectangle(frame, (x, y), (w, h), (255, 0, 0), 1)
 
     image.show(frame)
+
+
+if __name__ == "__main__":
+    app = wx.App()
+    frame = RegistrationFrame(True)
+    app.MainLoop()

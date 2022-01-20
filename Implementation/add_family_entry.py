@@ -1,41 +1,48 @@
 import pandas as pd
 import os
 
+db_file = './../database/family.csv'
+
+
+def set_env():
+    global db_file
+    db_file = './database/family.csv'
+
 
 def add_family_entry(idx, name, age, gender):
-    if not os.path.isfile('./../database/family.csv'):
+    if not os.path.isfile(db_file):
         old_df = pd.DataFrame()
     else:
-        old_df = pd.read_csv('./../database/family.csv')
+        old_df = pd.read_csv(db_file)
 
     new_data = {'ID': [idx], 'Nickname': name, 'Age': age, 'Gender': gender}
     new_df = pd.DataFrame(new_data)
     m_df = old_df.append(new_df)
-    m_df.to_csv("./../database/family.csv", index=False)
+    m_df.to_csv(db_file, index=False)
 
 
 def update_family_entry(name, age, gender):
-    old_df = pd.read_csv('./../database/family.csv')
+    old_df = pd.read_csv(db_file)
     old_id = old_df[old_df['Nickname'] == name].ID.item()
     old_df = old_df[old_df.Nickname != name]
 
     new_data = {'ID': [old_id], 'Nickname': name, 'Age': age, 'Gender': gender}
     new_df = pd.DataFrame(new_data)
     m_df = old_df.append(new_df)
-    m_df.to_csv("./../database/family.csv", index=False)
+    m_df.to_csv(db_file, index=False)
 
     return id
 
 
 def check_member_exists(name):
-    if not os.path.isfile('./../database/family.csv'):
+    if not os.path.isfile(db_file):
         return False
-    df = pd.read_csv("./../database/family.csv")
+    df = pd.read_csv(db_file)
     return name in df.Nickname.values
 
 
 def get_member(name):
-    df = pd.read_csv("./../database/family.csv")
+    df = pd.read_csv(db_file)
     try:
         idx = df.index[df['Nickname'] == name].tolist()[0]
         entries = df.iloc[idx, :]
@@ -46,7 +53,7 @@ def get_member(name):
 
 
 def get_ids():
-    df = pd.read_csv("./../database/family.csv")
+    df = pd.read_csv(db_file)
     return df.ID.values
 
 
