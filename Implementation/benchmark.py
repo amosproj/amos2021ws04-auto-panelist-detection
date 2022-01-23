@@ -11,6 +11,9 @@ import threading
 import psutil
 
 
+DETECTION_LABELS = './test images/detection_benchmark.json'
+RECOGNITION_LABELS = './test images/recognition_benchmark_low_res.json'
+
 class Benchmark:
 
     def __init__(self):
@@ -33,7 +36,7 @@ class Benchmark:
                           'Detection_CPU_Usage': [],
                           'Detection_RAM_Usage': [], 'Faces_Truth': [], 'Faces_Static': [],
                           'Faces_Detected': [], 'Detection_Correct': [], 'Bounding_Boxes': []}
-        f_detection = open('./test images/detection_benchmark.json')
+        f_detection = open(DETECTION_LABELS)
         detection_data = json.load(f_detection)
         imgs = []
         total_faces = 0
@@ -149,7 +152,7 @@ class Benchmark:
                             'Gender_CPU_Usage': [], 'Gender_RAM_Usage': [], 'Gender_Correct': [],
                             'Age_Time': [], 'Age_CPU_Usage': [], 'Age_RAM_Usage': [], 'Age_Correct': [],
                             'Emotion_Time': [], 'Emotion_CPU_Usage': [], 'Emotion_RAM_Usage': [], 'Emotion_Correct': []}
-        f_recognition = open('./test images/recognition_benchmark.json')
+        f_recognition = open(RECOGNITION_LABELS)
         recognition_data = json.load(f_recognition)
         imgs = []
         f_recognition.close()
