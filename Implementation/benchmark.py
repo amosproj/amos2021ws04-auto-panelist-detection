@@ -12,7 +12,8 @@ import psutil
 
 
 DETECTION_LABELS = './test images/detection_benchmark.json'
-RECOGNITION_LABELS = './test images/recognition_benchmark_low_res.json'
+RECOGNITION_LABELS = './test images/recognition_benchmark.json'
+IMG_SCALES = [1.0, 0.5, 0.33]
 
 class Benchmark:
 
@@ -30,7 +31,7 @@ class Benchmark:
             time.sleep(0.5)
 
 
-    def run_benchmark_detection(self):
+    def run_benchmark_detection(self, scale=1.0):
         detection_methods = ['Retina_Face']
         data_detection = {'Path': [], 'Img_Res': [], 'Face_Res': [], 'Method': [], 'Detection_Time': [],
                           'Detection_CPU_Usage': [],
@@ -53,6 +54,7 @@ class Benchmark:
                 sys_load_thread.start()
                 print('Testing {}'.format('./test images/' + img['path']))
                 bb_img = cv2.imread('./test images/' + img['path'])
+                bb_img = cv2.resize(bb_img, (0, 0), fx=scale, fy=scale)
                 img_res = '{} x {}'.format(bb_img.shape[1], bb_img.shape[0])
                 if method == 'Retina_Face':
                     number, faces, facial_areas = detection.detect_faces_deepface_RF(bb_img)
@@ -78,11 +80,11 @@ class Benchmark:
                 total_faces_detected += number
                 for facial_area in facial_areas:
                     bb_img = draw.rectangle(bb_img, facial_area)
-                filename = './benchmark/bounding_boxes/{}.jpg'.format(len(data_detection['Method']))
+                filename = './benchmark/bounding_boxes_res={}/{}.jpg'.format(scale, len(data_detection['Method']))
                 if not os.path.isdir('./benchmark'):
                     os.mkdir('./benchmark')
-                if not os.path.isdir('./benchmark/bounding_boxes'):
-                    os.mkdir('./benchmark/bounding_boxes')
+                if not os.path.isdir('./benchmark/bounding_boxes_res={}'.format(scale)):
+                    os.mkdir('./benchmark/bounding_boxes_res={}'.format(scale))
                 cv2.imwrite(filename, bb_img)
                 imgs.append(filename)
 
@@ -100,7 +102,7 @@ class Benchmark:
                 data_detection['Bounding_Boxes'].append(filename)
 
         df = pd.DataFrame.from_dict(data_detection)
-        writer = pd.ExcelWriter('./benchmark/detection_benchmark.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter('./benchmark/detection_benchmark_scale=' + str(scale) + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, sheet_name='detection')
 
         workbook = writer.book
@@ -123,8 +125,8 @@ class Benchmark:
 
         for i, img in enumerate(imgs):
             height, width = cv2.imread(img).shape[:2]
-            scale = 520 / height
-            worksheet.insert_image(1 + i, 13, img, {'x_scale': scale, 'y_scale': scale})
+            scale_document = 520 / height
+            worksheet.insert_image(1 + i, 13, img, {'x_scale': scale_document, 'y_scale': scale_document})
 
         try:
             detection_accuracy = df.Detection_Correct.value_counts()[True] / df.shape[0]
@@ -142,9 +144,9 @@ class Benchmark:
 
         workbook.close()
 
-        df.to_csv('./benchmark/detection_benchmark.csv', index=False)
+        df.to_csv('./benchmark/detection_benchmark_scale=' + str(scale) + '.csv', index=False)
 
-    def run_benchmark_recognition(self):
+    def run_benchmark_recognition(self, scale=1.0):
         recognition_methods = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
         data_recognition = {'Path': [], 'Img_Res': [], 'Face_Res': [], 'Recognition_Method': [], 'Recognition_Time': [],
                             'Recognition_Correct': [],
@@ -160,8 +162,8 @@ class Benchmark:
             for method in recognition_methods:
                 filename = './test images/' + img['path']
                 print('Testing {}'.format(filename))
-                imgs.append(filename)
                 bb_img = cv2.imread(filename)
+                bb_img = cv2.resize(bb_img, (0,0), fx=scale, fy=scale)
                 img_res = '{} x {}'.format(bb_img.shape[1], bb_img.shape[0])
                 _, faces, _ = detection.detect_faces_deepface_RF(bb_img)
                 face_res_height_list = []
@@ -227,6 +229,14 @@ class Benchmark:
                 self.cpu_usage = []
                 emotion_correct = (emotion == img['emotion'])
 
+                filename = './benchmark/res={}/{}.jpg'.format(scale, len(data_recognition['Path']))
+                if not os.path.isdir('./benchmark'):
+                    os.mkdir('./benchmark')
+                if not os.path.isdir('./benchmark/res={}'.format(scale)):
+                    os.mkdir('./benchmark/res={}'.format(scale))
+                cv2.imwrite(filename, bb_img)
+                imgs.append(filename)
+
                 data_recognition['Path'].append(img['path'])
                 data_recognition['Img_Res'].append(img_res)
                 data_recognition['Face_Res'].append(face_res)
@@ -253,7 +263,7 @@ class Benchmark:
 
         df = pd.DataFrame.from_dict(data_recognition)
 
-        writer = pd.ExcelWriter('./benchmark/recognition_benchmark.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter('./benchmark/recognition_benchmark_scale=' + str(scale) + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, sheet_name='recognition')
 
         workbook = writer.book
@@ -275,8 +285,8 @@ class Benchmark:
 
         for i, img in enumerate(imgs):
             height, width = cv2.imread(img).shape[:2]
-            scale = 400 / height
-            worksheet.insert_image(1 + i, 21, img, {'x_scale': scale, 'y_scale': scale})
+            scale_document = 520 / height
+            worksheet.insert_image(1 + i, 21, img, {'x_scale': scale_document, 'y_scale': scale_document})
 
         recognition_accuracy = []
         for recognition_method in recognition_methods:
@@ -303,15 +313,16 @@ class Benchmark:
         for i, recognition_method in enumerate(recognition_methods):
             worksheet.set_row(df.shape[0] + 1 + i, 20)
             worksheet.write(df.shape[0] + 1 + i, 0,
-                            '{}: Average recognition accuracy: {:.0f}%, gender accuracy: {:.0f}s, age accuracy: {:.0f}%, emotion accuracy: {:.0f}%'.format(
+                            '{}: Average recognition accuracy: {:.0f}%, gender accuracy: {:.0f}%, age accuracy: {:.0f}%, emotion accuracy: {:.0f}%'.format(
                                 recognition_method, recognition_accuracy[i] * 100, gender_accuracy * 100, age_accuracy * 100, emotion_accuracy * 100), summary_format)
 
         workbook.close()
 
-        df.to_csv('./benchmark/recognition_benchmark.csv', index=False)
+        df.to_csv('./benchmark/recognition_benchmark_scale=' + str(scale) + '.csv', index=False)
 
 
 if __name__ == '__main__':
     bm = Benchmark()
-    bm.run_benchmark_detection()
-    bm.run_benchmark_recognition()
+    for scale in IMG_SCALES:
+        bm.run_benchmark_detection(scale=scale)
+        bm.run_benchmark_recognition(scale=scale)
