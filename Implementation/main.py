@@ -2,6 +2,7 @@ from registration.register import Register
 from detection.logging import Logger
 from detection.remote import Remote
 from gui.save_gui import RegistrationFrame
+from Implementation.statistics import calculate_statistics
 
 import detection.detection as detection
 import detection.timer as timer
@@ -19,7 +20,7 @@ CAMERA = 1
 
 def main():
     test=0
-    settings = {'register': False}
+    settings = {'register': False, 'statistics': False}
     print('Panelist detection started.')
     vid = cv2.VideoCapture(CAMERA)
     t = timer.Timer()
@@ -67,6 +68,10 @@ def main():
         t.stop()
         time.sleep(min(abs(10 - t.elapsed_time), 6))
         test=test+1
+
+        if settings['statistics']:
+            calculate_statistics.calculate(print_data=True)
+            settings['statistics'] = False
 
 
 def main_2():

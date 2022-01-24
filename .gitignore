@@ -42,3 +42,8 @@ Implementation/gui/logs.csv
 
 # Benchmark
 Benchmark
+
+# Statistics
+Implementation/statistics/age_statistics.csv
+Implementation/statistics/gender_statistics.csv
+Implementation/statistics/general_statistics.csv
