@@ -9,9 +9,10 @@ import matplotlib.pyplot as plt
 import cv2
 import uuid
 import os
+import shutil
 
 CAMERA = 1
-RECOGNITION_MODEL = 'arcface'
+RECOGNITION_MODEL = 'vgg_face'
 
 
 class RegistrationFrame(wx.Frame):
@@ -26,6 +27,9 @@ class RegistrationFrame(wx.Frame):
             self.db_path = './../database'
         super().__init__(parent=None, title='Automatic Panelist Detection', size=(480, 480))
         self.panel = wx.Panel(self)
+
+        if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
+            os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
 
         self.horizontal_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.panelists_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -65,12 +69,60 @@ class RegistrationFrame(wx.Frame):
             for i, face in enumerate(faces):
                 plt.imshow(face)
                 if identities[i] == "Unknown":
-                    id = 0
                     identities[i] = "Not Recognized"
+                    used_ids = db.get_ids()
+                    while True:
+                        id = uuid.uuid4().int % 100
+                        if id not in used_ids:
+                            break
+                    name = 'Unknown-' + str(id)
+                    int_gender = 0 if genders[i] == 'Man' else 1
+                    db.add_family_entry(id, name, ages[i], int_gender, fixed=False)
+                    if not os.path.exists(f'{self.db_path}/{name}'):
+                        os.mkdir(f'{self.db_path}/{name}')
+                    img_ids = []
+                    for f in os.listdir(f'{self.db_path}/{name}'):
+                        img_ids.append(int(f.split(os.sep)[-1][:-4]))
+                    if not img_ids:
+                        img_id = 0
+                    else:
+                        img_id = max(img_ids) + 1
+                    img_path = f'{self.db_path}/{name}/{img_id}.jpg'
+                    cv2.imwrite(img_path, face)
+                    if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
+                        os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
                 else:
-                    id, age, gender = db.get_member(identities[i])
-                    genders[i] = gender
-                    ages[i] = age
+                    id, name, age, gender, it = db.get_member(identities[i])
+                    int_gender = 0 if genders[i] == 'Man' else 1
+                    # gender and age fixed by user
+                    if it == 0:
+                        str_gender = 'Man' if gender < 0.5 else 'Woman'
+                        genders[i] = str_gender
+                        ages[i] = int(age)
+                    # gender and age estimated
+                    else:
+                        new_age = (age * it + ages[i]) / (it + 1)
+                        new_gender = (gender * it + int_gender) / (it + 1)
+                        db.update_family_entry(identities[i], new_age, new_gender, fixed=False)
+                        str_gender = 'Man' if new_gender < 0.5 else 'Woman'
+                        genders[i] = str_gender
+                        ages[i] = int(new_age)
+                        if not os.path.exists(f'{self.db_path}/{name}'):
+                            os.mkdir(f'{self.db_path}/{name}')
+                        img_ids = []
+                        for f in os.listdir(f'{self.db_path}/{name}'):
+                            img_ids.append(int(f.split(os.sep)[-1][:-4]))
+                        if not img_ids:
+                            img_id = 0
+                        else:
+                            img_id = max(img_ids) + 1
+                        if max(img_ids) < 3: # do not save new images with each iteration
+                            img_path = f'{self.db_path}/{name}/{img_id}.jpg'
+                            cv2.imwrite(img_path, face)
+                            if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
+                                os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
+
+
                 # attentiveness = 0 (not implemented)
                 Logger.log(id, genders[i], ages[i], emotions[i], 0)
                 self.add_panelist(genders[i], ages[i], emotions[i], identities[i], face)
@@ -128,12 +180,12 @@ class RegistrationFrame(wx.Frame):
         self.registration_sizer.Add(self.age_ctrl, 0, wx.TOP, 10)
 
         registration_btn = wx.Button(self, label='Save Changes', size=(160, 30))
-        registration_btn.Bind(wx.EVT_BUTTON, lambda event, face=face: self.save_registration_info(face))
+        registration_btn.Bind(wx.EVT_BUTTON, lambda event, face=face: self.save_registration_info(face, name))
         self.right_sizer.Add(registration_btn, 0, wx.TOP | wx.CENTER, 30)
 
         self.panel.SetSizerAndFit(self.horizontal_sizer)
 
-    def save_registration_info(self, face):
+    def save_registration_info(self, face, orig_name):
         name = self.name_ctrl.GetValue()
         gender = self.gender_ctrl.GetValue()
         age = self.age_ctrl.GetValue()
@@ -143,10 +195,29 @@ class RegistrationFrame(wx.Frame):
             rand_id = uuid.uuid4().int % 100
             if rand_id not in used_ids:
                 break
+        if name != orig_name:
+            db.update_name(orig_name, name)
+            if os.path.isdir(self.db_path + os.sep + name):
+                img_ids = []
+                for f in os.listdir(self.db_path + os.sep + name):
+                    img_ids.append(int(f.split(os.sep)[-1][:-4]))
+                if not img_ids:
+                    img_id = 0
+                else:
+                    img_id = max(img_ids) + 1
+                for i, file in enumerate(os.listdir(self.db_path + os.sep + orig_name)):
+                    shutil.move(self.db_path + os.sep + orig_name + os.sep + file, self.db_path + os.sep + name +
+                                os.sep + str(img_id + i) + '.jpg')
+                os.rmdir(self.db_path + os.sep + orig_name)
+            else:
+                os.rename(self.db_path + os.sep + orig_name, self.db_path + os.sep + name)
+        if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
+            os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
+        str_gender = 0 if gender == 'Man' else 1
         if db.check_member_exists(name):
-            db.update_family_entry(name, age, gender)
+            db.update_family_entry(name, age, str_gender)
         else:
-            db.add_family_entry(rand_id, name, age, gender)
+            db.add_family_entry(rand_id, name, age, str_gender)
         if not os.path.exists(f'{self.db_path}/{name}'):
             os.mkdir(f'{self.db_path}/{name}')
         img_ids = []
