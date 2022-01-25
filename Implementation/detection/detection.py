@@ -59,14 +59,15 @@ def detect_faces_deepface(img):
     return num_people, faces
 
 
-def recognize_faces(faces, model='ArcFace'):
+# Facenet512 or VGG-Face
+def recognize_faces(faces, model='VGG-Face'):
     identities = []
     metrics = ["cosine", "euclidean", "euclidean_l2"] # for computing similarity. Lower score = more similarity.
     models = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
     #TODO handle exceptions if no faces or no images in database
 
     # Finds the most similar identities for each face # Afaik ArcFace+euclidean_l2 showed best results # skip detection: we already pass encoded faces
-    dfs = DeepFace.find(img_path = faces, db_path = db_path, model_name = model,detector_backend = 'skip', distance_metric = metrics[1])
+    dfs = DeepFace.find(img_path = faces, db_path = db_path, model_name = model,detector_backend = 'skip', distance_metric = metrics[2], )
     if not isinstance(dfs,list):
         dfs = [dfs]
 
@@ -74,8 +75,8 @@ def recognize_faces(faces, model='ArcFace'):
     for df in dfs:
         #plt.imshow(face)
         #plt.show()
-        cosine = df[model + '_euclidean']
-        
+        cosine = df[model + '_euclidean_l2']
+
         if len(cosine) > 0:
             max_idx = np.argmin(cosine)
             identity_path = df['identity'][max_idx]
