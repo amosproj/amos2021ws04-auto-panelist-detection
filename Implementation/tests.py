@@ -17,7 +17,7 @@ class TestOnImages(unittest.TestCase):
         cls.recognition_data = json.load(f_recognition)
         f_recognition.close()
 
-        detection.set_test_env()
+        detection.set_env()
 
     def test_detection(self):
         durations = []

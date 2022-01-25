@@ -15,7 +15,15 @@ RECOGNITION_MODEL = 'arcface'
 
 
 class RegistrationFrame(wx.Frame):
-    def __init__(self):
+    def __init__(self, from_main=False):
+        if from_main:
+            logo_path = "./assets/logo.png"
+            self.db_path = './database'
+            detection.set_env()
+            db.set_env()
+        else:
+            logo_path = "../assets/logo.png"
+            self.db_path = './../database'
         super().__init__(parent=None, title='Automatic Panelist Detection', size=(480, 480))
         self.panel = wx.Panel(self)
 
@@ -36,7 +44,7 @@ class RegistrationFrame(wx.Frame):
         self.detection_loop_thread = threading.Thread(target=self.detection_loop)
         self.detection_loop_thread.start()
 
-        wx.StaticBitmap(self, -1, wx.Bitmap("../assets/logo.png", wx.BITMAP_TYPE_ANY), pos=(25, 25))
+        wx.StaticBitmap(self, -1, wx.Bitmap(logo_path, wx.BITMAP_TYPE_ANY), pos=(25, 25))
         wx.StaticText(self, label='Current Panelists', style=wx.ALIGN_CENTER_HORIZONTAL, pos=(25, 150), size=(120, 20))
 
         self.panel.SetSizerAndFit(self.horizontal_sizer)
@@ -139,19 +147,19 @@ class RegistrationFrame(wx.Frame):
             db.update_family_entry(name, age, gender)
         else:
             db.add_family_entry(rand_id, name, age, gender)
-        if not os.path.exists(f'./../database/{name}'):
-            os.mkdir(f'./../database/{name}')
+        if not os.path.exists(f'{self.db_path}/{name}'):
+            os.mkdir(f'{self.db_path}/{name}')
         img_ids = []
-        for f in os.listdir(f'./../database/{name}'):
+        for f in os.listdir(f'{self.db_path}/{name}'):
             img_ids.append(int(f.split(os.sep)[-1][:-4]))
         if not img_ids:
             img_id = 0
         else:
             img_id = max(img_ids) + 1
-        img_path = f'./../database/{name}/{img_id}.jpg'
+        img_path = f'{self.db_path}/{name}/{img_id}.jpg'
         cv2.imwrite(img_path, face)
-        if os.path.isfile('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL)):
-            os.unlink('./../database/representations_{}.pkl'.format(RECOGNITION_MODEL))
+        if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
+            os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
         self.reset_registration()
 
 

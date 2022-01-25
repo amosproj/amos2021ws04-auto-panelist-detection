@@ -1,4 +1,3 @@
-
 import json
 import time
 from insightface.app import FaceAnalysis
@@ -24,7 +23,7 @@ db_path = './../database'
 
 
 
-def set_test_env():
+def set_env():
     global db_path
     db_path = './database'
 
@@ -60,14 +59,14 @@ def detect_faces_deepface(img):
     return num_people, faces
 
 
-def recognize_faces(faces):
+def recognize_faces(faces, model='ArcFace'):
     identities = []
     metrics = ["cosine", "euclidean", "euclidean_l2"] # for computing similarity. Lower score = more similarity.
     models = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
     #TODO handle exceptions if no faces or no images in database
 
     # Finds the most similar identities for each face # Afaik ArcFace+euclidean_l2 showed best results # skip detection: we already pass encoded faces
-    dfs = DeepFace.find(img_path = faces, db_path = db_path, model_name = 'ArcFace',detector_backend = 'skip', distance_metric = metrics[1])
+    dfs = DeepFace.find(img_path = faces, db_path = db_path, model_name = model,detector_backend = 'skip', distance_metric = metrics[1])
     if not isinstance(dfs,list):
         dfs = [dfs]
 
@@ -75,7 +74,7 @@ def recognize_faces(faces):
     for df in dfs:
         #plt.imshow(face)
         #plt.show()
-        cosine = df['ArcFace_euclidean']
+        cosine = df[model + '_euclidean']
         
         if len(cosine) > 0:
             max_idx = np.argmin(cosine)
