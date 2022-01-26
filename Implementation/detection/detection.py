@@ -10,7 +10,7 @@ import numpy as np
 import os
 
 
-class detection():
+class Detection:
     def __init__(self) -> None:
         # Creating face detection model
         self.face_detector = RetinaFace.build_model()

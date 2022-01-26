@@ -1,4 +1,4 @@
-from gui.save_gui import RegistrationFrame
+from gui.gui import RegistrationFrame
 import wx
 
 if __name__ == "__main__":

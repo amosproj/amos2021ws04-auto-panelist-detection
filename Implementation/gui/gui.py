@@ -1,36 +1,44 @@
+from Implementation.detection.logging import Logger
+from Implementation.detection.detection import Detection
+from Implementation.database import Database
+
 import wx
 import threading
-
-from Implementation.detection.logging import Logger
-from Implementation.detection import detection
-from Implementation import add_family_entry as db
-
-import matplotlib.pyplot as plt
 import cv2
 import uuid
 import os
 import shutil
 
+# Define camera to use (0 if only 1 camera connected)
 CAMERA = 1
+# Define recognition model to use
 RECOGNITION_MODEL = 'vgg_face'
 
 
 class RegistrationFrame(wx.Frame):
     def __init__(self, from_main=False):
+        self.db = Database()
+        self.detection = Detection()
+
+        # Setup paths
         if from_main:
             logo_path = "./assets/logo.png"
             self.db_path = './database'
-            detection.set_env()
-            db.set_env()
+            self.detection.set_env()
+            self.db.set_env()
         else:
             logo_path = "../assets/logo.png"
             self.db_path = './../database'
-        super().__init__(parent=None, title='Automatic Panelist Detection', size=(480, 480))
-        self.panel = wx.Panel(self)
 
+        # Delete old representations
         if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
             os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
 
+        # Create new window
+        super().__init__(parent=None, title='Automatic Panelist Detection', size=(480, 480))
+        self.panel = wx.Panel(self)
+
+        # Create basic interface structure
         self.horizontal_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.panelists_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -45,39 +53,57 @@ class RegistrationFrame(wx.Frame):
         self.upper_horizontal_sizer.Add(self.text_sizer, 0, wx.LEFT, 0)
         self.upper_horizontal_sizer.Add(self.registration_sizer, 0, wx.LEFT, 40)
 
-        self.detection_loop_thread = threading.Thread(target=self.detection_loop)
-        self.detection_loop_thread.start()
-
         wx.StaticBitmap(self, -1, wx.Bitmap(logo_path, wx.BITMAP_TYPE_ANY), pos=(25, 25))
         wx.StaticText(self, label='Current Panelists', style=wx.ALIGN_CENTER_HORIZONTAL, pos=(25, 150), size=(120, 20))
 
+        # Start detection loop in different thread
+        self.detection_loop_thread = threading.Thread(target=self.detection_loop)
+        self.detection_loop_thread.start()
+
+        # Display window
         self.panel.SetSizerAndFit(self.horizontal_sizer)
         self.Show()
 
     def detection_loop(self):
         print('Panelist detection started.')
+        # Initialize video capture using specified camera
         vid = cv2.VideoCapture(CAMERA)
+        # In every iteration faces are detected and processed on 1 captured image
         while True:
+            # Capture image
             ret, img = vid.read()
             if not ret:
                 raise SystemExit('Error occurred while capturing video')
-            num_detected, faces = detection.detect_faces_deepface(img)
+
+            # Get number of faces detected and images of these faces
+            num_detected, faces = self.detection.detect_faces_deepface(img)
             print('Number of people detected: {}'.format(num_detected))
-            identities = detection.recognize_faces(faces)
-            genders, ages, emotions = detection.analyze_faces(faces)
+            # Get identities, genders, ages, and emotions as arrays for all faces
+            identities = self.detection.recognize_faces(faces)
+            genders, ages, emotions = self.detection.analyze_faces(faces)
+
+            # Resets GUI sizers
             self.reset_panelists()
+
+            # For each face: Check if face is found in database and load corresponding data from database
             for i, face in enumerate(faces):
-                plt.imshow(face)
+                # If face not recognized: Create new database entry and store image
                 if identities[i] == "Unknown":
-                    identities[i] = "Not Recognized"
-                    used_ids = db.get_ids()
+                    # Generate new random id that is still unused
+                    used_ids = self.db.get_ids()
                     while True:
                         id = uuid.uuid4().int % 100
                         if id not in used_ids:
                             break
+
+                    # Name used for the unknown person
                     name = 'Unknown-' + str(id)
+                    identities[i] = name
+                    # Gender is < 0.5 for men and >= 0.5 for women
                     int_gender = 0 if genders[i] == 'Man' else 1
-                    db.add_family_entry(id, name, ages[i], int_gender, fixed=False)
+
+                    # Add person to the database and save image of the face
+                    self.db.add_family_entry(id, name, ages[i], int_gender, fixed=False)
                     if not os.path.exists(f'{self.db_path}/{name}'):
                         os.mkdir(f'{self.db_path}/{name}')
                     img_ids = []
@@ -89,24 +115,43 @@ class RegistrationFrame(wx.Frame):
                         img_id = max(img_ids) + 1
                     img_path = f'{self.db_path}/{name}/{img_id}.jpg'
                     cv2.imwrite(img_path, face)
+
+                    # Delete old representations
                     if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
                         os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
+
                 else:
-                    id, name, age, gender, it = db.get_member(identities[i])
+                    # Face is recognized
+                    # Load person's information from database
+                    id, age, gender, it = self.db.get_member(identities[i])
+                    name = identities[i]
+                    # Gender is < 0.5 for men and >= 0.5 for women
                     int_gender = 0 if genders[i] == 'Man' else 1
-                    # gender and age fixed by user
+
+                    # it is always 0 if gender and age are fixed by user
                     if it == 0:
+                        # Gender is < 0.5 for men and >= 0.5 for women
                         str_gender = 'Man' if gender < 0.5 else 'Woman'
+                        # Update age and gender based on the database
                         genders[i] = str_gender
+                        # Age estimates are floats -> convert to int
                         ages[i] = int(age)
-                    # gender and age estimated
+
+                    # it != 0 -> gender and age are estimated
                     else:
+                        # Update gender age age estimates with average values
                         new_age = (age * it + ages[i]) / (it + 1)
                         new_gender = (gender * it + int_gender) / (it + 1)
-                        db.update_family_entry(identities[i], new_age, new_gender, fixed=False)
+                        self.db.update_family_entry(identities[i], new_age, new_gender, fixed=False)
+
+                        # Gender is < 0.5 for men and >= 0.5 for women
                         str_gender = 'Man' if new_gender < 0.5 else 'Woman'
+                        # Update age and gender based on the database
                         genders[i] = str_gender
+                        # Age estimates are floats -> convert to int
                         ages[i] = int(new_age)
+
+                        # Save image of the face
                         if not os.path.exists(f'{self.db_path}/{name}'):
                             os.mkdir(f'{self.db_path}/{name}')
                         img_ids = []
@@ -116,29 +161,36 @@ class RegistrationFrame(wx.Frame):
                             img_id = 0
                         else:
                             img_id = max(img_ids) + 1
-                        if max(img_ids) < 3: # do not save new images with each iteration
+                        if max(img_ids) < 3: # Save images only at the first 3 iteration
                             img_path = f'{self.db_path}/{name}/{img_id}.jpg'
                             cv2.imwrite(img_path, face)
+                            # Delete old representations
                             if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
                                 os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
 
-
+                # Log attributes of detected face
                 # attentiveness = 0 (not implemented)
                 Logger.log(id, genders[i], ages[i], emotions[i], 0)
+
+                # Add new button containing person's name and corresponding attributes to GUI
                 self.add_panelist(genders[i], ages[i], emotions[i], identities[i], face)
 
     def add_panelist(self, gender, age, emotion, name, face):
+        # Add new button containing person's name and corresponding attributes to GUI
         panelist_btn = wx.Button(self, label=name+'\n{} | {} | {}'.format(gender, age, emotion), size=(150, 50))
         self.panelists_sizer.Add(panelist_btn, 0, wx.TOP, 10)
         self.panel.SetSizerAndFit(self.horizontal_sizer)
+        # Call registration method if button is pressed
         panelist_btn.Bind(wx.EVT_BUTTON, lambda event, gender=gender, age=age, name=name, face=face: self.registration(gender, age, name, face))
 
     def reset_panelists(self):
+        # Resets GUI sizers
         self.panelists_sizer.Clear(True)
         self.panelists_sizer.AddSpacer(180)
         self.panel.SetSizerAndFit(self.horizontal_sizer)
 
     def reset_registration(self):
+        # Clear registration window
         self.right_sizer.Clear(True)
         self.upper_horizontal_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.image_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -151,8 +203,10 @@ class RegistrationFrame(wx.Frame):
         self.panel.SetSizerAndFit(self.horizontal_sizer)
 
     def registration(self, gender, age, name, face):
+        # Clear registration window
         self.reset_registration()
 
+        # Create new registration window
         scale = 200 / face.shape[0]
         width = int(face.shape[1] * scale)
         height = int(face.shape[0] * scale)
@@ -180,23 +234,32 @@ class RegistrationFrame(wx.Frame):
         self.registration_sizer.Add(self.age_ctrl, 0, wx.TOP, 10)
 
         registration_btn = wx.Button(self, label='Save Changes', size=(160, 30))
+
+        # Save entered registration information in database
         registration_btn.Bind(wx.EVT_BUTTON, lambda event, face=face: self.save_registration_info(face, name))
         self.right_sizer.Add(registration_btn, 0, wx.TOP | wx.CENTER, 30)
 
         self.panel.SetSizerAndFit(self.horizontal_sizer)
 
     def save_registration_info(self, face, orig_name):
+        # Get entered information
         name = self.name_ctrl.GetValue()
         gender = self.gender_ctrl.GetValue()
         age = self.age_ctrl.GetValue()
-        # random generated id
-        used_ids = db.get_ids()
+
+        # Generate new random id that is still unused
+        used_ids = self.db.get_ids()
         while True:
             rand_id = uuid.uuid4().int % 100
             if rand_id not in used_ids:
                 break
+
+        # If name was changed by the user (Can happen if the user was unknown before)
         if name != orig_name:
-            db.update_name(orig_name, name)
+            # Update name in database
+            self.db.update_name(orig_name, name)
+
+            # If photo folder with new name already exits: Move images to this folder
             if os.path.isdir(self.db_path + os.sep + name):
                 img_ids = []
                 for f in os.listdir(self.db_path + os.sep + name):
@@ -209,15 +272,24 @@ class RegistrationFrame(wx.Frame):
                     shutil.move(self.db_path + os.sep + orig_name + os.sep + file, self.db_path + os.sep + name +
                                 os.sep + str(img_id + i) + '.jpg')
                 os.rmdir(self.db_path + os.sep + orig_name)
+            # If photo folder with new name does not exits: Rename old folder
             else:
                 os.rename(self.db_path + os.sep + orig_name, self.db_path + os.sep + name)
+
+        # Delete old representations
         if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
             os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
+
+        # Gender is < 0.5 for men and >= 0.5 for women
         str_gender = 0 if gender == 'Man' else 1
-        if db.check_member_exists(name):
-            db.update_family_entry(name, age, str_gender)
+
+        # Update information stored in database
+        if self.db.check_member_exists(name):
+            self.db.update_family_entry(name, age, str_gender)
         else:
-            db.add_family_entry(rand_id, name, age, str_gender)
+            self.db.add_family_entry(rand_id, name, age, str_gender)
+
+        # Save image of the face
         if not os.path.exists(f'{self.db_path}/{name}'):
             os.mkdir(f'{self.db_path}/{name}')
         img_ids = []
@@ -229,12 +301,17 @@ class RegistrationFrame(wx.Frame):
             img_id = max(img_ids) + 1
         img_path = f'{self.db_path}/{name}/{img_id}.jpg'
         cv2.imwrite(img_path, face)
+
+        # Delete old representations
         if os.path.isfile('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL)):
             os.unlink('{}/representations_{}.pkl'.format(self.db_path, RECOGNITION_MODEL))
+
+        # Clear registration window
         self.reset_registration()
 
 
 if __name__ == '__main__':
+    # Start GUI
     app = wx.App()
     frame = RegistrationFrame()
     app.MainLoop()
