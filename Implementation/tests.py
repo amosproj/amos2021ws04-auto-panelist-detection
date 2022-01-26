@@ -2,7 +2,7 @@ import unittest
 import time
 import json
 import numpy as np
-from detection import detection
+from detection.detection import Detection
 
 
 class TestOnImages(unittest.TestCase):
@@ -17,13 +17,14 @@ class TestOnImages(unittest.TestCase):
         cls.recognition_data = json.load(f_recognition)
         f_recognition.close()
 
-        detection.set_env()
+        cls.detection = Detection()
+        cls.detection.set_env()
 
     def test_detection(self):
         durations = []
         for img in self.detection_data:
             st = time.time()
-            number, _ = detection.detect_faces_deepface('./test images/' + img['path'])
+            number, _ = self.detection.detect_faces_deepface('./test images/' + img['path'])
             self.assertEqual(number, img['number'])
             t = time.time() - st
             durations.append(t)
@@ -32,9 +33,9 @@ class TestOnImages(unittest.TestCase):
     def test_recognition(self):
         durations = []
         for img in self.recognition_data:
-            _, faces = detection.detect_faces_deepface('./test images/' + img['path'])
+            _, faces = self.detection.detect_faces_deepface('./test images/' + img['path'])
             st = time.time()
-            identity = detection.recognize_faces(faces[0])[0]
+            identity = self.detection.recognize_faces(faces[0])[0]
             self.assertEqual(identity, img['name'])
             t = time.time() - st
             durations.append(t)
@@ -43,9 +44,9 @@ class TestOnImages(unittest.TestCase):
     def test_age_detection(self):
         durations = []
         for img in self.recognition_data:
-            _, faces = detection.detect_faces_deepface('./test images/' + img['path'])
+            _, faces = self.detection.detect_faces_deepface('./test images/' + img['path'])
             st = time.time()
-            age = detection.detect_age(faces[0])
+            age = self.detection.detect_age(faces[0])
             self.assertAlmostEqual(age, img['age'], None, None, 10)
             t = time.time() - st
             durations.append(t)
@@ -55,9 +56,9 @@ class TestOnImages(unittest.TestCase):
         # ! emotion_labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
         durations = []
         for img in self.recognition_data:
-            _, faces = detection.detect_faces_deepface('./test images/' + img['path'])
+            _, faces = self.detection.detect_faces_deepface('./test images/' + img['path'])
             st = time.time()
-            emotion = detection.detect_emotion(faces[0])
+            emotion = self.detection.detect_emotion(faces[0])
             self.assertEqual(emotion, img['emotion'])
             t = time.time() - st
             durations.append(t)
@@ -66,9 +67,9 @@ class TestOnImages(unittest.TestCase):
     def test_gender_detection(self):
         durations = []
         for img in self.recognition_data:
-            _, faces = detection.detect_faces_deepface('./test images/' + img['path'])
+            _, faces = self.detection.detect_faces_deepface('./test images/' + img['path'])
             st = time.time()
-            gender = detection.detect_gender(faces[0])
+            gender = self.detection.detect_gender(faces[0])
 
             if gender == "Woman":
                 gender = "f"
