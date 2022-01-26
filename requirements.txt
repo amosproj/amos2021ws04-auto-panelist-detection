@@ -11,3 +11,5 @@ matplotlib==3.4.3
 numpy==1.21.4
 deepface==0.0.68
 retina-face==0.0.5
+pandas==1.3.4
+psutil==5.9.0
