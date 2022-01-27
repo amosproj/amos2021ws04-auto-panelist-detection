@@ -24,31 +24,31 @@ port = 1883
 keepalive = 60
 #topic = 'your topic'
 seriel = getserial()
-topic_command = 'jjy000/'+ seriel + '/command'
-topic_data = 'jjy000/'+ seriel + '/data'
+topic_command = username + '/'+ seriel + '/command'
+topic_data = username + '/'+ seriel + '/data'
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("[INFO]Connected success")
-        client.publish('jjy000/reportID', seriel+' connected successfully')
+        print("[INFO] Connected success")
+        client.publish(username + '/reportID', seriel+' connected successfully')
         client.subscribe(topic_command)
     else:
-        print(f"[ERROR]Connected fail with code {rc}")
+        print(f"[ERROR] Connected fail with code {rc}")
 
 def on_message(client, userdata, msg):
     if (msg.topic == topic_command) & (msg.payload == b'submit_data'):
-        print('[INFO]got the command to submit data')
+        print('[INFO] got the command to submit data')
         f = open("logs.csv", "rb")
         fileContent = f.read()
         byteArr = bytearray(fileContent)
         client.publish(topic_data, b'csv file will be sent!')
-        client.publish(topic_data, byteArr)
-        print(f"[INFO]data sent to {topic_data}")
+        client.publish(topic_data, byteArr, qos=1)
+        print(f"[INFO] data sent to {topic_data}")
 
 client = mqtt.Client()
 client.username_pw_set(username, pwd)
 client.on_connect = on_connect
 client.on_message = on_message
-client.will_set( ('jjy000/' + seriel + '/status'),  b'{"status": "Off"}')
+client.will_set( (username+ '/' + seriel + '/status'),  b'{"status": "Off"}')
 client.connect(broker, port, keepalive)
 client.loop_forever()
