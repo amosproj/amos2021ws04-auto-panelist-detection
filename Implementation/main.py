@@ -20,7 +20,7 @@ CAMERA = 1
 
 def main():
     test=0
-    settings = {'register': False, 'statistics': False}
+    settings = {'register': False, 'statistics': True}
     print('Panelist detection started.')
     vid = cv2.VideoCapture(CAMERA)
     t = timer.Timer()
@@ -70,7 +70,7 @@ def main():
         test=test+1
 
         if settings['statistics']:
-            calculate_statistics.calculate(print_data=True)
+            calculate_statistics.calculate(print_to_console=False)
             settings['statistics'] = False
 
 
