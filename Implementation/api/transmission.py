@@ -45,10 +45,11 @@ def on_message(client, userdata, msg):
         client.publish(topic_data, byteArr, qos=1)
         print(f"[INFO] data sent to {topic_data}")
 
-client = mqtt.Client()
-client.username_pw_set(username, pwd)
-client.on_connect = on_connect
-client.on_message = on_message
-client.will_set( (username+ '/' + seriel + '/status'),  b'{"status": "Off"}')
-client.connect(broker, port, keepalive)
-client.loop_forever()
+def start_api():
+    client = mqtt.Client()
+    client.username_pw_set(username, pwd)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.will_set( (username+ '/' + seriel + '/status'),  b'{"status": "Off"}')
+    client.connect(broker, port, keepalive)
+    client.loop_forever()
