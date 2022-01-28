@@ -29,4 +29,3 @@ class Remote:
 
     def get_logged_in(self):
         return list(self.logged_in)
-
