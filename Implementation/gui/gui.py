@@ -75,18 +75,25 @@ class RegistrationFrame(wx.Frame):
             if not ret:
                 raise SystemExit('Error occurred while capturing video')
 
-            # Get number of faces detected and images of these faces
-            num_detected, faces = self.detection.detect_faces_deepface(img)
+            # Get number of faces detected, images of these faces, and corresponding facial areas
+            num_detected, faces, facial_areas = self.detection.detect_faces_deepface_RF(img)
             print('Number of people detected: {}'.format(num_detected))
-            # Get identities, genders, ages, and emotions as arrays for all faces
+
+            # Get identities, genders, ages, emotions, and false positives as arrays for all faces
             identities = self.detection.recognize_faces(faces)
             genders, ages, emotions = self.detection.analyze_faces(faces)
+            false_positives = self.detection.liveness_detector(img, facial_areas)
 
             # Resets GUI sizers
             self.reset_panelists()
 
             # For each face: Check if face is found in database and load corresponding data from database
             for i, face in enumerate(faces):
+                # Check if face belongs to a real person
+                if not false_positives[i]:
+                    print('Detected face does not belong to a real person.')
+                    continue
+
                 # If face not recognized: Create new database entry and store image
                 if identities[i] == "Unknown":
                     # Generate new random id that is still unused
