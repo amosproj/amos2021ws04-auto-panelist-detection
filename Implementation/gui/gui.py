@@ -2,6 +2,8 @@ from Implementation.detection.logging import Logger
 from Implementation.detection.detection import Detection
 from Implementation.database import Database
 
+from GazeTracking.gaze_tracking import GazeTracking
+
 import wx
 import threading
 import cv2
@@ -19,6 +21,8 @@ class RegistrationFrame(wx.Frame):
     def __init__(self, from_main=False):
         self.db = Database()
         self.detection = Detection()
+        # Setup gaze tracking
+        self.gaze = GazeTracking()
 
         # Setup paths
         if from_main:
@@ -93,6 +97,14 @@ class RegistrationFrame(wx.Frame):
                 if not false_positives[i]:
                     print('Detected face does not belong to a real person.')
                     continue
+
+                # Predict attentiveness
+                # Get gaze of current face
+                self.gaze.refresh(face)
+                if self.gaze.pupils_located and (self.gaze.is_center() or self.gaze.is_blinking()):
+                    attentiveness = 1
+                else:
+                    attentiveness = 0
 
                 # If face not recognized: Create new database entry and store image
                 if identities[i] == "Unknown":
@@ -177,18 +189,19 @@ class RegistrationFrame(wx.Frame):
 
                 # Log attributes of detected face
                 # attentiveness = 0 (not implemented)
-                Logger.log(id, genders[i], ages[i], emotions[i], 0)
+                Logger.log(id, genders[i], ages[i], emotions[i], attentiveness)
 
                 # Add new button containing person's name and corresponding attributes to GUI
-                self.add_panelist(genders[i], ages[i], emotions[i], identities[i], face)
+                self.add_panelist(genders[i], ages[i], emotions[i], identities[i], attentiveness, face)
 
-    def add_panelist(self, gender, age, emotion, name, face):
+    def add_panelist(self, gender, age, emotion, name, attentiveness, face):
         # Add new button containing person's name and corresponding attributes to GUI
-        panelist_btn = wx.Button(self, label=name+'\n{} | {} | {}'.format(gender, age, emotion), size=(150, 50))
+        panelist_btn = wx.Button(self, label=name+'\n{} | {} | {} | {}'.format(gender, age, emotion, attentiveness), size=(150, 50))
         self.panelists_sizer.Add(panelist_btn, 0, wx.TOP, 10)
         self.panel.SetSizerAndFit(self.horizontal_sizer)
         # Call registration method if button is pressed
-        panelist_btn.Bind(wx.EVT_BUTTON, lambda event, gender=gender, age=age, name=name, face=face: self.registration(gender, age, name, face))
+        panelist_btn.Bind(wx.EVT_BUTTON, lambda event, gender=gender, age=age, name=name, attentiveness=attentiveness,
+                                                face=face: self.registration(gender, age, name, face))
 
     def reset_panelists(self):
         # Resets GUI sizers
