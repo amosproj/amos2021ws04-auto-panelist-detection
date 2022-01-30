@@ -101,10 +101,14 @@ class RegistrationFrame(wx.Frame):
                 # Predict attentiveness
                 # Get gaze of current face
                 self.gaze.refresh(face)
-                if self.gaze.pupils_located and (self.gaze.is_center() or self.gaze.is_blinking()):
-                    attentiveness = 1
-                else:
-                    attentiveness = 0
+                # Uncomment to show positions of the eyes in preview image
+                # face = self.gaze.annotated_frame()
+
+                # Person is attentive when eyes are not closed
+                attentiveness = 0
+                if self.gaze.pupils_located:
+                    if not self.gaze.is_blinking():
+                        attentiveness = 1
 
                 # If face not recognized: Create new database entry and store image
                 if identities[i] == "Unknown":
