@@ -79,7 +79,7 @@ def save_in_age_stats(id, age, avg_min_per_day):
 
 
 # Save row to age_stats file
-def save_test(id, day, watchtime_in_min):
+def save_to_avg_watchtime_per_day(id, day, watchtime_in_min):
     file_path = paths['watchtime_by_day']
     with open(file_path, 'a+', newline='') as csvfile:
         fieldnames = ['id', 'day', 'watchtime_in_min']
@@ -125,7 +125,7 @@ def plot_statistics():
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
             x.append(row[1])
-            y.append(float(row[3]))
+            y.append(float(row[2]))
 
         plt.bar(x, y, color='r', width=0.72, label='Watchtime')
         plt.xlabel('Gender')
@@ -171,13 +171,16 @@ def plot_statistics():
         plt.bar(x, y, color='y', width=0.72, label='Watchtime')
         plt.xlabel('Day')
         plt.ylabel('Watchtime in min')
-        plt.title('Watchtime per day')
+        plt.title('Total watchtime per day')
         plt.legend()
         plt.show()
         plt.clf()
 
 
-# All calculate functions save the data in csv files using the save_... functions
+# TODO: Watchtime by user per day
+# How should the avg per day be calculated ?
+
+# All "calculate" functions save the data in csv files using the save_... functions
 def calculate_watchtime_by_user(print_to_console):
     # Get all unique ids from the logs
     sheet = pd.read_csv('./logs.csv', delimiter=',')
@@ -261,21 +264,39 @@ def calculate_avg_watchtime_per_day():
     log_days = np.sort(log_days.unique())
 
     users_id = np.sort(sheet['id'].unique())
+    max_time_diff = 60 * 6  # Max. difference in sec between two logs to count
     id = 0
     for day in log_days:
         total_watchtime = 0
         one_day_logs = sheet[sheet['timestamp'].str[0:10] == day].sort_values(by=['timestamp'])
         for i in users_id:
             one_user_logs = one_day_logs[one_day_logs['id'] == i]
-            if one_user_logs.empty:
+            if one_user_logs.empty or len(one_user_logs) < 2:
                 continue
+
+            k = 0
+            j = 1
             first_log = datetime.strptime(one_user_logs.iloc[0]['timestamp'], '%Y-%m-%d %H:%M:%S')
-            last_log = datetime.strptime(one_user_logs.iloc[-1]['timestamp'], '%Y-%m-%d %H:%M:%S')
-            total_watchtime = total_watchtime + (last_log - first_log).seconds
+            while True:
+                tmp_log = datetime.strptime(one_user_logs.iloc[k]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                next_log = datetime.strptime(one_user_logs.iloc[j]['timestamp'], '%Y-%m-%d %H:%M:%S')
+
+                if j < len(one_user_logs) - 1:
+                    if (next_log - tmp_log).seconds < max_time_diff:
+                        j = j + 1
+                        k = k + 1
+                    else:
+                        total_watchtime = total_watchtime + (tmp_log - first_log).seconds
+                        first_log = datetime.strptime(one_user_logs.iloc[j]['timestamp'], '%Y-%m-%d %H:%M:%S')
+                        j = j + 1
+                        k = k + 1
+                else:
+                    total_watchtime = total_watchtime + (next_log - first_log).seconds
+                    break
 
         # Now save the entry in the test_stats.csv
-        avg_day = float("{0:.3f}".format(total_watchtime / 60))
-        save_test(id, day, avg_day)
+        avg_day = float("{0:.4f}".format(total_watchtime / 60))
+        save_to_avg_watchtime_per_day(id, day, avg_day)
         id = id + 1
 
 
