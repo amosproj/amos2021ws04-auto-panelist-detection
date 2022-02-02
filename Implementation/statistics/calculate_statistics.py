@@ -5,16 +5,18 @@ import numpy as np
 import csv
 import os
 
+
 """ The function 'calculate()' is the starting point of the calculation process. """
 
-paths = {'user_stats': './statistics/user_stats.csv', 'gender_stats': './statistics/gender_stats.csv',
-         'age_stats': './statistics/age_stats.csv', 'watchtime_by_day': './statistics/watchtime_day_stats.csv'}
+paths = {'user_stats': './user_stats.csv', 'gender_stats': './gender_stats.csv',
+         'age_stats': './age_stats.csv', 'watchtime_by_day': './watchtime_day_stats.csv',
+            'logs': '../logs.csv'}
 
 
 # Clean/delete statistics files
 def init():
     for p in paths:
-        if os.path.exists(paths[p]):
+        if os.path.exists(paths[p]) and p != 'logs':
             f = open(paths[p], "w+")
             f.close()
 
@@ -125,7 +127,7 @@ def plot_statistics():
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
             x.append(row[1])
-            y.append(float(row[2]))
+            y.append(float(row[3]))
 
         plt.bar(x, y, color='r', width=0.72, label='Watchtime')
         plt.xlabel('Gender')
@@ -183,7 +185,7 @@ def plot_statistics():
 # All "calculate" functions save the data in csv files using the save_... functions
 def calculate_watchtime_by_user(print_to_console):
     # Get all unique ids from the logs
-    sheet = pd.read_csv('./logs.csv', delimiter=',')
+    sheet = pd.read_csv(paths['logs'], delimiter=',')
     if sheet.empty:
         print('There is not enough data to calculate statistics!')
         return
@@ -254,7 +256,7 @@ def calculate_watchtime_by_age(print_to_console):
 #
 def calculate_avg_watchtime_per_day():
     # Get all unique ids from the logs
-    sheet = pd.read_csv('./logs.csv', delimiter=',')
+    sheet = pd.read_csv(paths['logs'], delimiter=',')
     if sheet.empty:
         print('There is not enough data to calculate statistics!')
         return
@@ -321,3 +323,7 @@ def calculate(print_to_console=False, plot_stats=True):
 
     if plot_stats:
         plot_statistics()
+
+
+if __name__ == "__main__":
+    calculate()
