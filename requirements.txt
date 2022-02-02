@@ -15,4 +15,3 @@ psutil==5.9.0
 flask==2.0.2
 paho-mqtt==1.6.1
 dlib==19.16.0
-wxPython==4.1.1
