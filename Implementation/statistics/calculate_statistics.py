@@ -224,6 +224,8 @@ def calculate_watchtime_by_gender(print_to_console):
     idg = 0
     for g in ['w', 'm', 'n']:
         group_logs = sheet[sheet['gender'] == g]
+        if len(group_logs) < 1:
+            continue
         avg_watchtime = float("{0:.3f}".format(group_logs['avg_min_per_day'].sum() / len(group_logs)))
         avg_age = group_logs['age'].sum() / len(group_logs)
         save_in_gender_stats(idg, g, avg_age, avg_watchtime)
@@ -244,6 +246,8 @@ def calculate_watchtime_by_age(print_to_console):
     ida = 0
     for k in ages:
         age_logs = sheet[sheet['age'] == k]
+        if len(age_logs) < 1:
+            continue
         avg_watchtime = float("{0:.3f}".format(age_logs['avg_min_per_day'].sum() / len(age_logs)))
         save_in_age_stats(ida, k, avg_watchtime)
         ida = ida + 1
