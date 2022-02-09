@@ -12,7 +12,7 @@ import os
 import shutil
 
 # Define camera to use (0 if only 1 camera connected)
-CAMERA = 1
+CAMERA = 0
 # Define recognition model to use
 RECOGNITION_MODEL = 'vgg_face'
 
