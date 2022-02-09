@@ -211,6 +211,14 @@ class RegistrationFrame(wx.Frame):
         # Resets GUI sizers
         self.panelists_sizer.Clear(True)
         self.panelists_sizer.AddSpacer(180)
+        self.upper_horizontal_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.image_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.text_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.registration_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.right_sizer.Add(self.image_sizer)
+        self.right_sizer.Add(self.upper_horizontal_sizer, 0, wx.TOP, 40)
+        self.upper_horizontal_sizer.Add(self.text_sizer, 0, wx.LEFT, 0)
+        self.upper_horizontal_sizer.Add(self.registration_sizer, 0, wx.LEFT, 40)
         self.panel.SetSizerAndFit(self.horizontal_sizer)
 
     def reset_registration(self):
