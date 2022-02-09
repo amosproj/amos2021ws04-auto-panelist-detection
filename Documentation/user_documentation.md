@@ -1,4 +1,4 @@
-#User Documentation
+# User Documentation
 
 The set up of the panelist-detection-device requires only a few simple steps:
 
