@@ -9,6 +9,7 @@ class TestOnImages(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Load labels from JSON files that contain labels for all images to be tested
         f_detection = open('./test images/detection.json')
         cls.detection_data = json.load(f_detection)
         f_detection.close()
@@ -20,6 +21,7 @@ class TestOnImages(unittest.TestCase):
         cls.detection = Detection()
         cls.detection.set_env()
 
+    # test detection
     def test_detection(self):
         durations = []
         for img in self.detection_data:
@@ -30,6 +32,7 @@ class TestOnImages(unittest.TestCase):
             durations.append(t)
         print('Average detection time: {} s'.format(np.mean(durations)))
 
+    # test recognition
     def test_recognition(self):
         durations = []
         for img in self.recognition_data:
@@ -41,6 +44,7 @@ class TestOnImages(unittest.TestCase):
             durations.append(t)
         print('Average recognition time: {} s'.format(np.mean(durations)))
 
+    # test age detection
     def test_age_detection(self):
         durations = []
         for img in self.recognition_data:
@@ -52,6 +56,7 @@ class TestOnImages(unittest.TestCase):
             durations.append(t)
         print('Average age detection time: {} s'.format(np.mean(durations)))
 
+    # test emotion detection
     def test_emotion_detection(self):
         # ! emotion_labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
         durations = []
@@ -64,6 +69,7 @@ class TestOnImages(unittest.TestCase):
             durations.append(t)
         print('Average emotion detection time: {} s'.format(np.mean(durations)))
 
+    # test gender detection
     def test_gender_detection(self):
         durations = []
         for img in self.recognition_data:
