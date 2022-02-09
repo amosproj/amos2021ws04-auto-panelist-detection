@@ -15,8 +15,11 @@ def getserial():
     return cpuserial
 
 #username = 'your user name'
+username = 'username'
 #pwd = 'your password'
+pwd = 'password'
 #broker = "your broker"
+broker = "mqtt.example.com"
 port = 1883
 keepalive = 60
 #topic = 'your topic'
