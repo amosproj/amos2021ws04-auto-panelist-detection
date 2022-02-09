@@ -24,3 +24,33 @@ torch-1.10.0a0+git36449ea-cp39-cp39-linux_aarch64.whl: [Download Link](https://t
 Once the runtime environment setup is done, then just cd into Implementation folder and type `python main.py` to execute the script, which will start to monitor the panellist in front of the TV all the time unless the power supply ideally from the TV() is interrupted.
 
 In the productive scenario, the program should be executed automatically when the power supply is provided to the device.
+
+## Run Program
+The Automatic Panelist Detection program can be started using the following commands:
+
+    cd Implementation
+    python main.py
+
+The logged data can be received either via a REST api or via the MQTT protocol. This can be specified by setting the `API` parameter in the `Implementation/main.py` file.
+
+## Create Performance Reports
+Performance reports for using different images and recognition models can be created automatically using the following command:
+
+    cd Implementation
+    python benchmark.py
+
+This creates two reports: One for the detection benchmark and one for the recognition as well as the age, gender, and emotion detection benchmark.
+Both reports are saved as .xlsx (containing the tested images) and .csv files.
+
+The images used for both benchmarks can be specified in the respective JSON files `Implementation/test images/detection_benchmark.json` and `Implementation/test images/recognition_benchmark.json`.
+These files also include the corresponding labels.
+
+The benchmarks can be run for different scaled versions of the given images. The image scales can be set by changing the `IMG_SCLAE` parameter in the `Implementation/benchmark.py` file.
+
+## Generate Statistics
+User statistic can be generated based on the logged data using the following command:
+
+    cd Implementation/statistics
+    python calculate_statistics.py
+
+This stores various user statistics in the `Implementation/statistics` directory. It also shows plots with the generated data.
