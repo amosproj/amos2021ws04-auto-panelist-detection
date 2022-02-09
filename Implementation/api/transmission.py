@@ -15,11 +15,8 @@ def getserial():
     return cpuserial
 
 #username = 'your user name'
-username = 'jjy000'
 #pwd = 'your password'
-pwd = 'qazwsxedc123'
 #broker = "your broker"
-broker = "mqtt.arduino-hannover.de"
 port = 1883
 keepalive = 60
 #topic = 'your topic'
