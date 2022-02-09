@@ -6,7 +6,8 @@
 The goal of this project is to create a cheap yet efficient device to optimize television audience measurement. This will be achieved by automatically detecting and recognizing panelists using pre-trained computer vision models and an RGB and infrared camera. All household panelists can be registered in a local database to facilitate the recognition process. Alongside gender and age, attentiveness and emotions will also be assessed. To account for user privacy, the gathered data is anonymized and sent to a GfK server. The device is not only non-intrusive but also time and power-efficient. It should also work under diffficult lighting conditions.
 
 ## Project Setup
-- Clone this project to your local disk.
+- Clone this project including its submodules to your local disk using `git clone --recurse-submodules https://github.com/amosproj/amos2021ws04-auto-panelist-detection.git`.
+- Go to the project directory using `cd amos2021ws04-auto-panelist-detection`
 - Create and enable your python virtual enviroment.
 - Run `pip install -r requirements.txt`.
 

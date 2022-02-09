@@ -17,7 +17,8 @@ Once the runtime environment setup is done, just follow the instruction in the s
 In the productive scenario, the program should be executed automatically when the power supply is provided to the device.
 
 ## Project Setup
-- Clone this project to your local disk.
+- Clone this project including its submodules to your local disk using `git clone --recurse-submodules https://github.com/amosproj/amos2021ws04-auto-panelist-detection.git`.
+- Go to the project directory using `cd amos2021ws04-auto-panelist-detection`
 - Create and enable your python virtual enviroment.
 - Run `pip install -r requirements.txt`.
 
