@@ -1,12 +1,5 @@
 # User Documentation
 
-The set up of the panelist-detection-device requires only a few simple steps:
+After uploading the software to, e.g., a Raspberry Pi and placing its camera next to the desired TV area, the program starts capturing real-time images from the panelists' living area according to specified intervals. With the help of a graphical user interface the user can see the extracted faces from each frame. For each detected face, a new entry is created with the detected ID of the user as well as their predicted age, gender, emotion, and attention.
 
--   First you have to connect the device to the electrical outlet.
--   Then that you use the other cable to connect the device to the TV.
-
-If you did these two steps correctly, a green light should appear on the device if you start the TV. This means the device is turned on and is already diligently detecting panelists.
-
-**IMPORTANT**: Adjust the device in a way that the built-in-camera is facing in the same direction as the TV and nothing is blocking its view!
-
-You don't have to set the system manually, the camera detects all faces in front of the TV and registers every new and unrecognized face. The device continues to detect panelists until the TV is turned off. If that’s the case, the green light as well as the camera turns off.
+When clicking on an entry, an actual photo of the corresponding panelist's face is displayed. Here, it is also possible to enter a new name for the user and update their information: age and gender. In the next iterations, when the same user is recognized, their entered name and correct age and gender are displayed. 
