@@ -16,9 +16,13 @@ The Automatic Panelist Detection program can be started using the following comm
     cd Implementation
     python main.py
 
+The logged data can be received either via a REST api or via the MQTT protocol. This can be specified by setting the `API` parameter in the `Implementation/main.py` file.
+For MQTT, the `Implementation/api/transmission.py` file needs to be modified and your MQTT broker, username and password should be provided there.
+
 ## Create Performance Reports
 Performance reports for using different images and recognition models can be created automatically using the following command:
 
+    cd Implementation
     python benchmark.py
 
 This creates two reports: One for the detection benchmark and one for the recognition as well as the age, gender, and emotion detection benchmark.
@@ -28,5 +32,13 @@ The images used for both benchmarks can be specified in the respective JSON file
 These files also include the corresponding labels.
 
 The benchmarks can be run for different scaled versions of the given images. The image scales can be set by changing the `IMG_SCLAE` parameter in the `Implementation/benchmark.py` file.
+
+## Generate Statistics
+User statistic can be generated based on the logged data using the following command:
+
+    cd Implementation/statistics
+    python calculate_statistics.py
+
+This stores various user statistics in the `Implementation/statistics` directory. It also shows plots with the generated data.
 
 For more information click [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ).
