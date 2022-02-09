@@ -1,5 +1,12 @@
 # Design Documentation
 
+After uploading the software to, e.g., a Raspberry Pi and placing its camera next to the desired TV area, it starts capturing real-time images from the panelists' living area according to specified intervals. The faces of the panelists are then extracted from each frame, as well as an estimate of their ages, genders, and emotions. The software can also recognize which panelists have been detected before by using a database that automatically stores their features. This way, the software can track the panelists’ watching behavior and save all their information in log files, which can then be used to calculate useful statistics and gain insights for the television audience measurement.
+The software assures users' privacy and only sends the required anonymized information to the server. Furthermore, the software comes with a UI that allows users to enter their names and update other information.
+
+The detection and recognition of the faces and their features is done through pre-trained machine learning models, which can easily be replaced in the code by new or self-implemented ones. The performance of these models can be tested through the benchmark testing code.
+The attentiveness of a panelist had to be estimated using a rule-based approach that depends on the status of the eyes: (semi-)closed or open. A better approach can be implemented (ML-based or eye tracking) but this was out of the scope of this project.
+
+
 The code is located in the `Implementation` directory. The Automatic Panelist Detection Software can be started using the `main.py` file. In this file, both the graphical user interface
 and the API are started. Files that belong to the API are located in the `api` directory. The GUI is created
 in the `gui/gui.py` file. Alongside displaying information about the detected people, this module handles the processing of the captured
