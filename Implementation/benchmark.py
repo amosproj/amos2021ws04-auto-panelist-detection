@@ -15,7 +15,7 @@ import psutil
 DETECTION_LABELS = './test images/detection_benchmark.json'
 RECOGNITION_LABELS = './test images/recognition_benchmark.json'
 # Reports will be created for specified scaled versions of the images
-IMG_SCALES = [1.0, 0.5, 0.33]
+IMG_SCALES = [0.5]
 
 
 class Benchmark:
@@ -169,7 +169,7 @@ class Benchmark:
     # Creates benchmark report for recognition + age, gender, and emotion detection
     def run_benchmark_recognition(self, scale=1.0):
         # Recognition methods to be tested
-        recognition_methods = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
+        recognition_methods = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace"]
         data_recognition = {'Path': [], 'Img_Res': [], 'Face_Res': [], 'Recognition_Method': [], 'Recognition_Time': [],
                             'Recognition_Correct': [],
                             'Recognition_CPU_Usage': [], 'Recognition_RAM_Usage': [], 'Gender_Time': [],

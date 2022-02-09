@@ -1,7 +1,6 @@
 import sys
 import os
 sys.path.insert(0, os.path.join(sys.path[0], os.pardir))
-print(sys.path)
 
 from gui.gui import RegistrationFrame
 import api.stats as rest
